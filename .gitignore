@@ -1,0 +1,32 @@
+# --- Dependencias ---
+node_modules/
+
+# --- Secretos y entorno (reglas §21, §23) ---
+.env
+.env.*
+!.env.example
+
+# --- Builds ---
+dist/
+build/
+frontend/dist/
+backend/dist/
+*.tsbuildinfo
+
+# --- Cobertura y reportes ---
+coverage/
+coverage/
+*.lcov
+
+# --- Logs ---
+*.log
+npm-debug.log*
+
+# --- Editores y SO ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Vite/React cache ---
+frontend/.vite/
