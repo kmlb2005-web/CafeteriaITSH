@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Navigate, useNavigate } from 'react-router'
+import { Link, Navigate, useNavigate } from 'react-router'
 import { ApiError } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { RUTA_POR_ROL } from '../../lib/roles'
@@ -125,6 +125,16 @@ export default function LoginPage() {
             <Button type="submit" disabled={enviando} className="w-full">
               {enviando ? 'Entrando…' : 'Iniciar sesión'}
             </Button>
+
+            <p className="text-center text-sm text-muted-foreground">
+              ¿No tienes cuenta?{' '}
+              <Link
+                to="/registro"
+                className="font-semibold text-primary underline-offset-4 hover:underline"
+              >
+                Regístrate
+              </Link>
+            </p>
           </form>
         </CardContent>
       </Card>

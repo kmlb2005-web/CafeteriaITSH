@@ -45,7 +45,8 @@ esqueleto del frontend (app única con rutas por rol).
   JWT + bcrypt, middleware de autorización por rol.
 - Seed de cuentas operativas iniciales (admin, cajero, cocinero).
 - Frontend: scaffold Vite + React + TS, Tailwind + shadcn/ui, React Router con
-  `/login`, `/admin`, `/caja`, `/cocina`, `/menu`, `/mis-pedidos` protegidas.
+  `/login` y `/registro` (públicas); `/admin`, `/caja`, `/cocina`, `/menu`,
+  `/mis-pedidos` protegidas.
 - Pantalla de login y layouts por rol.
 - Gestión de usuarios operativos (US5, parte de usuarios): el administrador
   crea, edita y deshabilita cajeros y cocineros desde `/admin`.

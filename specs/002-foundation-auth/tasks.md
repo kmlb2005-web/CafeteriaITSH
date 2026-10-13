@@ -79,6 +79,7 @@ verde y `docs/reglas.md` §20 requiere pruebas de autenticación y autorización
 - [x] T020 [US1] Create `frontend/src/App.tsx` router with `/login` + role-based redirects and `frontend/src/routes/ProtectedRoute.tsx` (guard sesión+rol)
 - [x] T021 [US1] Create `frontend/src/pages/login/LoginPage.tsx` (formulario validado, mensaje claro sin revelar cuenta, redirección por rol)
 - [x] T022 [US1] Create auth context in `frontend/src/lib/auth.tsx` (carga `me()` al iniciar, estado de sesión, logout)
+- [x] T038 [US1] Create `frontend/src/pages/registro/RegistroPage.tsx` (registro público FR-005/US1.5: validación, enlace desde `/login`, auto-login tras registrar) + test `RegistroPage.test.tsx` — agregado al validar el quickstart (T034)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 

@@ -7,6 +7,7 @@ import { CajaLayout } from './layouts/CajaLayout'
 import { CocinaLayout } from './layouts/CocinaLayout'
 import { ClienteLayout } from './layouts/ClienteLayout'
 import LoginPage from './pages/login/LoginPage'
+import RegistroPage from './pages/registro/RegistroPage'
 import UsuariosPage from './pages/admin/UsuariosPage'
 import CajaPage from './pages/caja/CajaPage'
 import CocinaPage from './pages/cocina/CocinaPage'
@@ -37,6 +38,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/registro" element={<RegistroPage />} />
 
           {/* Administrador (US2) */}
           <Route

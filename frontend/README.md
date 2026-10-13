@@ -25,6 +25,7 @@ los tokens de `docs/DESIGN.md` y componentes base al estilo shadcn/ui.
 | Ruta | Rol permitido | Estado |
 |------|---------------|--------|
 | `/login` | público | Sprint 1 |
+| `/registro` | público (clientes) | Sprint 1 |
 | `/admin` | administrador | Sprint 1 (gestión de usuarios) |
 | `/caja` | cajero | esqueleto (pantalla en Sprint 4) |
 | `/cocina` | cocinero | esqueleto (pantalla en Sprint 4) |
