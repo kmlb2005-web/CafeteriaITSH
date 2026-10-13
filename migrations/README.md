@@ -13,3 +13,8 @@
 -- `platillo` y `menu_dia` ya existen en el esquema baseline
 -- (research.md R1 de specs/003-menu-management).
 -- ============================================================
+-- Nota (Sprint 3): `pedido`, `pedido_detalle`, `pago`, `estado_pedido`,
+-- `transicion_estado` e historial ya existen en el baseline; la única
+-- migración nueva es `001_pago_estado.sql` (estado del pago).
+-- (research.md R1 de specs/004-advance-orders-payment)
+-- ============================================================

@@ -47,6 +47,37 @@ export interface ItemMenuAdmin extends ItemMenu {
   activo: boolean;
 }
 
+/** Partida de pedido: precio congelado al momento de crearlo (R4). */
+export interface PartidaPedido {
+  id: number;
+  menu_dia_id: number;
+  nombre: string;
+  cantidad: number;
+  precio_unitario: number;
+  subtotal: number;
+}
+
+/** Pedido con su estado resuelto como nombre (`Pendiente`, `Pagado`, …). */
+export interface Pedido {
+  id: number;
+  numero: string;
+  tipo: 'anticipado' | 'mostrador';
+  estado: string;
+  total: number;
+  /** `YYYY-MM-DDTHH:mm` (hora local) en pedidos anticipados. */
+  fecha_recoleccion: string | null;
+  creado_en: string;
+  partidas: PartidaPedido[];
+}
+
+/** Pago 1:1 con el pedido; jamás incluye datos de tarjeta (SC-S3-04). */
+export interface Pago {
+  metodo: 'online' | 'efectivo';
+  monto: number;
+  referencia: string;
+  estado: 'pendiente' | 'confirmado' | 'rechazado';
+}
+
 /** Ruta de inicio por rol (US1: redirección tras login). */
 export const RUTA_POR_ROL: Record<Rol, string> = {
   administrador: '/admin',

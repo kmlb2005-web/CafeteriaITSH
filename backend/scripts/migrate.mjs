@@ -5,7 +5,7 @@
 //
 // Uso: cd backend && npm run migrate
 import 'dotenv/config';
-import { readdirSync, readFile } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import mysql from 'mysql2/promise';
@@ -66,7 +66,7 @@ async function main() {
     let pending = 0;
     for (const file of files) {
       if (applied.has(file)) continue;
-      const content = await readFile(path.join(MIGRATIONS_DIR, file), 'utf8');
+      const content = readFileSync(path.join(MIGRATIONS_DIR, file), 'utf8');
       console.log(`Aplicando ${file}...`);
       await conn.query(content);
       await conn.query('INSERT INTO schema_migrations (nombre) VALUES (?)', [
