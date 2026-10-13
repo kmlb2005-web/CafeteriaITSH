@@ -85,6 +85,6 @@
 - [x] T016 [P] Gates completos en ambos paquetes:
   `npm run lint && npm run typecheck && npm test` (+ `npm run build` en
   frontend).
-- [ ] T017 Demo aprobada por la patrocinadora → marcar Sprint 4 completado
-  en `docs/sprints.md`.
+- [x] T017 Demo aprobada por la patrocinadora → marcar Sprint 4 completado
+  en `docs/sprints.md` — demo aprobada 2026-10-13
 

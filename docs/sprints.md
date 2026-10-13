@@ -113,7 +113,7 @@ los estados de pedido.
 
 ---
 
-## Sprint 4 — Mostrador (cajero) y cocina
+## Sprint 4 — Mostrador (cajero) y cocina ✅ COMPLETADO (demo aprobada 2026-10-13)
 
 **Feature**: `specs/005-counter-kitchen/`
 
