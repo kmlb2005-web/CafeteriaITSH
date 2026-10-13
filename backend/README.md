@@ -40,7 +40,7 @@ tests/
 scripts/migrate.mjs  # runner de migraciones
 ```
 
-## API (Sprint 1)
+## API
 
 - `POST /api/auth/register` — registro de clientes
 - `POST /api/auth/login` — inicia sesión (cookie `token` httpOnly)
@@ -57,6 +57,22 @@ scripts/migrate.mjs  # runner de migraciones
   catálogo (solo administrador)
 - `GET|PUT /api/admin/menu`, `DELETE /api/admin/menu/:id` — publicar el
   menú del día: alta/edición (upsert) y quitar renglones (solo administrador)
+- `POST /api/caja/pedidos` — capturar pedido de mostrador (solo cajero;
+  sin regla de 10 minutos, solo menú de hoy)
+- `POST /api/caja/pedidos/:id/pago` — cobrar en efectivo (`FOR UPDATE`, un
+  solo cobro por pedido)
+- `GET  /api/caja/pedidos/listos` — pedidos `Listo` para entregar
+- `POST /api/caja/pedidos/:id/estado` — entregar (`Entregado`) o cancelar
+  (`Cancelado`), validado contra `transicion_estado`
+- `GET  /api/cocina/pedidos` — KDS: pedidos activos (`Pagado`, `En
+  preparación`, `Listo`) de ambos orígenes ordenados por llegada (solo
+  cocinero)
+- `POST /api/cocina/pedidos/:id/estado` — `En preparación` / `Listo` con
+  bitácora en `pedido_estado_historial`
 - `GET  /api/health` — salud del servicio
 
-Errores con formato `{ "error": { "code", "message" } }` (reglas §15).
+Los cambios de estado se validan contra la tabla `transicion_estado` (flujo
+`Pendiente → Pagado → En preparación → Listo → Entregado` + cancelaciones);
+los terminales (`Entregado`, `Cancelado`) no tienen transiciones salientes y
+responden `409 transicion_invalida`. Errores con formato
+`{ "error": { "code", "message" } }` (reglas §15).

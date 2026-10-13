@@ -29,8 +29,8 @@ los tokens de `docs/DESIGN.md` y componentes base al estilo shadcn/ui.
 | `/admin` | administrador | Sprint 1 (gestión de usuarios) |
 | `/admin/platillos` | administrador | Sprint 2 (catálogo) |
 | `/admin/menu` | administrador | Sprint 2 (menú del día) |
-| `/caja` | cajero | esqueleto (pantalla en Sprint 4) |
-| `/cocina` | cocinero | esqueleto (pantalla en Sprint 4) |
+| `/caja` | cajero | Sprint 4 (captura + cobro en efectivo, entregas) |
+| `/cocina` | cocinero | Sprint 4 (KDS con sondeo cada 4 s) |
 | `/menu` | cliente | Sprint 2–3 (menú + carrito) |
 | `/pedido/confirmar` | cliente | Sprint 3 (revisión + total + 10 min) |
 | `/pedido/:id/pago` | cliente | Sprint 3 (pago simulado) |

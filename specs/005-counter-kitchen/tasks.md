@@ -77,12 +77,12 @@
 
 ## Phase 5: Polish & Security
 
-- [ ] T014 [P] Docs: `backend/README.md` y `frontend/README.md` (endpoints y
+- [x] T014 [P] Docs: `backend/README.md` y `frontend/README.md` (endpoints y
   pantallas del Sprint 4).
-- [ ] T015 Quickstart e2e: cadena cajero → cocina → entrega según
+- [x] T015 Quickstart e2e: cadena cajero → cocina → entrega según
   `specs/005-counter-kitchen/quickstart.md` (incluye 409s por transición y
   permisos).
-- [ ] T016 [P] Gates completos en ambos paquetes:
+- [x] T016 [P] Gates completos en ambos paquetes:
   `npm run lint && npm run typecheck && npm test` (+ `npm run build` en
   frontend).
 - [ ] T017 Demo aprobada por la patrocinadora → marcar Sprint 4 completado
