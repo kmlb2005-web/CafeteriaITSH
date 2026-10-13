@@ -63,7 +63,7 @@ esqueleto del frontend (app única con rutas por rol).
 
 ---
 
-## Sprint 2 — Gestión de menú y consulta de menú
+## Sprint 2 — Gestión de menú y consulta de menú ✅ COMPLETADO (demo aprobada 2026-10-13)
 
 **Feature**: `specs/003-menu-management/`
 

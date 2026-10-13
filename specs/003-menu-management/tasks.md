@@ -91,7 +91,7 @@ description: "Task list template for feature implementation"
 - [x] T016 [P] Documentation: update `backend/README.md` (endpoints de menú) and `frontend/README.md` (rutas /admin/platillos, /admin/menu)
 - [x] T017 Validate `quickstart.md` end-to-end (seed → dev → flujo admin→cliente → gates) — seed creación/idempotencia ✓, E2E por proxy: PUT admin → GET cliente ve precio nuevo ✓, UI `/menu` 200 ✓
 - [x] T018 Run full gates: `npm test` + `npm run typecheck` + lint en `backend/` y `frontend/` (+ build) — backend 37/37, frontend 16/16, lint+typecheck verdes
-- [ ] T019 After demo approval: marcar Sprint 2 completado en `docs/sprints.md`
+- [x] T019 After demo approval: marcar Sprint 2 completado en `docs/sprints.md` — demo aprobada por la patrocinadora 2026-10-13
 
 ---
 
