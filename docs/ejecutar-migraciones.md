@@ -17,7 +17,11 @@ Los datos de acceso:
 | Servidor | `127.0.0.1:3306` |
 | Base de datos | `cafe_itsh` |
 | Usuario | `cafe_admin` |
-| Contraseña | `cafeContra` |
+| Contraseña | `<TU_CONTRASENA>` (la eliges tú al crear el usuario) |
+
+> La contraseña vive solo en tu `backend/.env` (nunca en el repo): guárdala
+> al crear el usuario del paso siguiente y reemplaza `<TU_CONTRASENA>` en los
+> ejemplos de abajo.
 
 ## Paso previo: crear la base de datos y el usuario (una sola vez)
 
@@ -32,8 +36,8 @@ CREATE DATABASE IF NOT EXISTS cafe_itsh
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_0900_ai_ci;
 
-CREATE USER IF NOT EXISTS 'cafe_admin'@'localhost' IDENTIFIED BY 'cafeContra';
-CREATE USER IF NOT EXISTS 'cafe_admin'@'%'         IDENTIFIED BY 'cafeContra';
+CREATE USER IF NOT EXISTS 'cafe_admin'@'localhost' IDENTIFIED BY '<TU_CONTRASENA>';
+CREATE USER IF NOT EXISTS 'cafe_admin'@'%'         IDENTIFIED BY '<TU_CONTRASENA>';
 
 GRANT ALL PRIVILEGES ON cafe_itsh.* TO 'cafe_admin'@'localhost';
 GRANT ALL PRIVILEGES ON cafe_itsh.* TO 'cafe_admin'@'%';
@@ -88,7 +92,7 @@ cmd /c "mysql -u cafe_admin -p -h 127.0.0.1 --default-character-set=utf8mb4 cafe
 
 ## Ejecutar con DBeaver
 
-1. Abre DBeaver y crea una conexión **MySQL** con los datos de la tabla de arriba (host `127.0.0.1`, puerto `3306`, base `cafe_itsh`, usuario `cafe_admin`, contraseña `cafeContra`).
+1. Abre DBeaver y crea una conexión **MySQL** con los datos de la tabla de arriba (host `127.0.0.1`, puerto `3306`, base `cafe_itsh`, usuario `cafe_admin`, contraseña `<TU_CONTRASENA>`).
 2. Abre el archivo `docs/001_crear_esquema.sql` en un editor SQL.
 3. Selecciona toda la consulta y ejecuta (Ctrl+Enter o botón SQL → Execute SQL script).
 4. Repite con `docs/002_seed_inicial.sql`.
@@ -139,4 +143,4 @@ Debe dar: `roles = 4`, `estados = 6`, `transiciones = 8`, `platillos = 8`, `menu
 - MySQL 8.0 valida las restricciones `CHECK` (precio ≥ 0, cantidad > 0, monto > 0, tipos de pedido/pago/notificación), por lo que datos inválidos se rechazan desde la base.
 - El menú de ejemplo se inserta con la fecha actual (`CURRENT_DATE`). Para tener menú en otro día, ejecuta un `INSERT` manual en `menu_dia` con la fecha deseada.
 - Para el backend, la variable de entorno será:
-  `DATABASE_URL=mysql://cafe_admin:cafeContra@127.0.0.1:3306/cafe_itsh`
+  `DATABASE_URL=mysql://cafe_admin:<TU_CONTRASENA>@127.0.0.1:3306/cafe_itsh`
