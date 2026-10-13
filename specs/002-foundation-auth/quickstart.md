@@ -5,7 +5,7 @@ Valida el plan de forma local antes de la demo del sprint.
 
 ## Requisitos previos
 
-- Node.js LTS (24.x) y npm.
+- Node.js LTS (validado con 20.20.2) y npm.
 - MySQL 8 corriendo localmente (o instancia accesible).
 - Git (el repo se inicializa en la Fase 1 si aún no existe).
 
@@ -13,7 +13,7 @@ Valida el plan de forma local antes de la demo del sprint.
 
 ```bash
 cp backend/.env.example backend/.env
-# editar: DATABASE_URL, JWT_SECRET (valor aleatorio fuerto),
+# editar: DATABASE_URL, JWT_SECRET (valor aleatorio fuerte),
 #         PORT, NODE_ENV, credenciales de seed
 ```
 
@@ -21,16 +21,17 @@ cp backend/.env.example backend/.env
 
 ## 2. Base de datos
 
+La base `cafe_itsh` con su esquema y seed inicial ya existen (ver
+`docs/ejecutar-migraciones.md` para recrearlas desde cero). El runner de
+migraciones registra esos scripts como baseline en su primera corrida:
+
 ```bash
-# crear la base (ejemplo)
-mysql -u root -p -e "CREATE DATABASE cafeteria CHARACTER SET utf8mb4;"
+# aplica migrations/*.sql pendientes (idempotente)
+cd backend && npm run migrate
 
-# aplicar migraciones en orden
-node scripts/migrate.mjs
-
-# seed idempotente: 4 roles + cuentas operativas (imprime contraseñas
-# generadas solo si no existían)
-npx tsx backend/src/db/seed.ts
+# seed idempotente: asegura los 4 roles + cuentas operativas
+# (imprime contraseñas generadas solo si no existían)
+npm run seed
 ```
 
 ## 3. Correr en desarrollo
@@ -60,11 +61,11 @@ Abrir `http://localhost:5173/login`.
 ## 5. Gates de calidad (criterio del sprint)
 
 ```bash
-cd backend  && npm test && npm run typecheck
-cd frontend && npm test && npm run typecheck
+cd backend  && npm test && npm run typecheck && npm run lint
+cd frontend && npm test && npm run typecheck && npm run lint
 ```
 
-Ambos comandos deben terminar en verde antes de la demo.
+Todos los comandos deben terminar en verde antes de la demo.
 
 ## 6. Demo del sprint
 

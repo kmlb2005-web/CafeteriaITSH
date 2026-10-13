@@ -31,10 +31,10 @@ verde y `docs/reglas.md` §20 requiere pruebas de autenticación y autorización
 **Purpose**: Project initialization and basic structure
 
 - [x] T001 [P] Init git repo + create `.gitignore` (node_modules, `.env`, dist, coverage) in repository root
-- [ ] T002 Backend TypeScript scaffold: `backend/tsconfig.json` (strict), scripts `dev|build|test|typecheck` in `backend/package.json`, install express, mysql2, zod, bcrypt, jsonwebtoken, dotenv, vitest, supertest, tsx, typescript
-- [ ] T003 Frontend TypeScript migration: rename `frontend/src/*.jsx` → `.tsx`, `frontend/tsconfig.json` (strict), install react-router, tailwindcss, vitest, @testing-library/react
-- [ ] T004 [P] Lint configs: `backend/eslint.config.js` and keep `frontend/eslint.config.js` aligned (camelCase/PascalCase per reglas §18)
-- [ ] T005 [P] Env config: `backend/.env.example` (DATABASE_URL, JWT_SECRET, NODE_ENV, PORT, SEED_*_PASSWORD) + validation schema in `backend/src/config/env.ts`
+- [x] T002 Backend TypeScript scaffold: `backend/tsconfig.json` (strict), scripts `dev|build|test|typecheck` in `backend/package.json`, install express, mysql2, zod, bcrypt, jsonwebtoken, dotenv, vitest, supertest, tsx, typescript (hecho con `bcryptjs` en lugar de `bcrypt` — sin binarios nativos; types propios)
+- [x] T003 Frontend TypeScript migration: rename `frontend/src/*.jsx` → `.tsx`, `frontend/tsconfig.json` (strict), install react-router, tailwindcss, vitest, @testing-library/react
+- [x] T004 [P] Lint configs: `backend/eslint.config.js` and keep `frontend/eslint.config.js` aligned (camelCase/PascalCase per reglas §18) (backend creado; revisión de frontend en T036)
+- [x] T005 [P] Env config: `backend/.env.example` (DATABASE_URL, JWT_SECRET, NODE_ENV, PORT, SEED_*_PASSWORD) + validation schema in `backend/src/config/env.ts`
 
 ---
 
@@ -44,13 +44,13 @@ verde y `docs/reglas.md` §20 requiere pruebas de autenticación y autorización
 
 **CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T006 Migration runner: create `scripts/migrate.mjs` (applies `migrations/*.sql` in order, records in `schema_migrations`)
-- [ ] T007 Create `migrations/001_roles_usuarios.sql` (tables `roles`, `usuarios`, unique `correo`, FK `rol_id`, seed de 4 roles) per data-model.md
-- [ ] T008 DB access: create `backend/src/db/pool.ts` (mysql2/promise from env) + idempotent seed in `backend/src/db/seed.ts` (cuentas operativas con contraseñas de entorno)
-- [ ] T009 [P] Error handling: create `backend/src/middleware/error.ts` (formato `{ error: { code, message } }`, logging sin filtrar detalles, reglas §15)
-- [ ] T010 App bootstrap: create `backend/src/app.ts` and `backend/src/server.ts` (Express + rutas `/api/*` + error middleware)
-- [ ] T011 [P] Frontend API plumbing: configure proxy `/api` in `frontend/vite.config.ts` + fetch wrapper `frontend/src/lib/api.ts` (credentials: include, errores tipados)
-- [ ] T012 [P] Base UI: copy shadcn/ui components (button, input, label, card) to `frontend/src/components/ui/` with project tokens per reglas §2
+- [x] T006 Migration runner: create `backend/scripts/migrate.mjs` (applies `migrations/*.sql` in order, records in `schema_migrations`) — ruta ajustada a `backend/scripts/` para resolver dependencias ESM
+- [x] T007 Create `migrations/001_roles_usuarios.sql` (tables `roles`, `usuarios`, unique `correo`, FK `rol_id`, seed de 4 roles) per data-model.md — **ADAPTADO**: el esquema ya existe en `docs/001_crear_esquema.sql` + `docs/002_seed_inicial.sql` (tablas `rol`/`usuario` con `password_hash`, `activo`, FK y correo único); el runner los registra como **baseline** y `migrations/README.md` documenta el flujo a partir de aquí
+- [x] T008 DB access: create `backend/src/db/pool.ts` (mysql2/promise from env) + idempotent seed in `backend/src/db/seed.ts` (cuentas operativas con contraseñas de entorno)
+- [x] T009 [P] Error handling: create `backend/src/middleware/error.ts` (formato `{ error: { code, message } }`, logging sin filtrar detalles, reglas §15)
+- [x] T010 App bootstrap: create `backend/src/app.ts` and `backend/src/server.ts` (Express + rutas `/api/*` + error middleware) — smoke `/api/health` → 200
+- [x] T011 [P] Frontend API plumbing: configure proxy `/api` in `frontend/vite.config.ts` + fetch wrapper `frontend/src/lib/api.ts` (credentials: include, errores tipados)
+- [x] T012 [P] Base UI: copy shadcn/ui components (button, input, label, card) to `frontend/src/components/ui/` with project tokens per reglas §2 (tokens completos de `docs/DESIGN.md` en `frontend/src/index.css`)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -66,19 +66,19 @@ verde y `docs/reglas.md` §20 requiere pruebas de autenticación y autorización
 
 ### Tests for User Story 1
 
-- [ ] T013 [P] [US1] Integration tests for register/login/me/logout in `backend/tests/integration/auth.test.ts` (201, 200+cookie, 401 genérico, 409, 403 dado de baja)
-- [ ] T014 [P] [US1] Unit tests for password hashing in `backend/tests/unit/password.test.ts` (hash no reversible, verify correcto/incorrecto)
-- [ ] T015 [P] [US1] Component test for login form in `frontend/src/pages/login/LoginPage.test.tsx` (errores claros, envío, redirección por rol)
+- [x] T013 [P] [US1] Integration tests for register/login/me/logout in `backend/tests/integration/auth.test.ts` (201, 200+cookie, 401 genérico, 409, 403 dado de baja)
+- [x] T014 [P] [US1] Unit tests for password hashing in `backend/tests/unit/password.test.ts` (hash no reversible, verify correcto/incorrecto)
+- [x] T015 [P] [US1] Component test for login form in `frontend/src/pages/login/LoginPage.test.tsx` (errores claros, envío, redirección por rol)
 
 ### Implementation for User Story 1
 
-- [ ] T016 [P] [US1] Create `backend/src/utils/password.ts` (bcrypt cost ≥10: `hashPassword`, `verifyPassword`)
-- [ ] T017 [P] [US1] Create `backend/src/services/auth.service.ts` (register solo `alumno_docente`, login con mensaje genérico, logout, me) per `contracts/auth-api.md`
-- [ ] T018 [P] [US1] Create `backend/src/middleware/auth.ts` (`requireAuth`, `requireRole`, verifica JWT + `activo`) + type augmentation `backend/src/types/express.d.ts`
-- [ ] T019 [US1] Create `backend/src/controllers/auth.controller.ts` + `backend/src/routes/auth.routes.ts` (POST register/login/logout, GET me, validación zod) and mount in `backend/src/app.ts`
-- [ ] T020 [US1] Create `frontend/src/App.tsx` router with `/login` + role-based redirects and `frontend/src/routes/ProtectedRoute.tsx` (guard sesión+rol)
-- [ ] T021 [US1] Create `frontend/src/pages/login/LoginPage.tsx` (formulario validado, mensaje claro sin revelar cuenta, redirección por rol)
-- [ ] T022 [US1] Create auth context in `frontend/src/lib/auth.tsx` (carga `me()` al iniciar, estado de sesión, logout)
+- [x] T016 [P] [US1] Create `backend/src/utils/password.ts` (bcrypt cost ≥10: `hashPassword`, `verifyPassword`)
+- [x] T017 [P] [US1] Create `backend/src/services/auth.service.ts` (register solo `alumno_docente`, login con mensaje genérico, logout, me) per `contracts/auth-api.md` — registro crea rol `usuario` (nombre real en BD)
+- [x] T018 [P] [US1] Create `backend/src/middleware/auth.ts` (`requireAuth`, `requireRole`, verifica JWT + `activo`) + type augmentation `backend/src/types/express.d.ts`
+- [x] T019 [US1] Create `backend/src/controllers/auth.controller.ts` + `backend/src/routes/auth.routes.ts` (POST register/login/logout, GET me, validación zod) and mount in `backend/src/app.ts`
+- [x] T020 [US1] Create `frontend/src/App.tsx` router with `/login` + role-based redirects and `frontend/src/routes/ProtectedRoute.tsx` (guard sesión+rol)
+- [x] T021 [US1] Create `frontend/src/pages/login/LoginPage.tsx` (formulario validado, mensaje claro sin revelar cuenta, redirección por rol)
+- [x] T022 [US1] Create auth context in `frontend/src/lib/auth.tsx` (carga `me()` al iniciar, estado de sesión, logout)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -94,14 +94,14 @@ verde y `docs/reglas.md` §20 requiere pruebas de autenticación y autorización
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Integration tests for admin CRUD in `backend/tests/integration/usuarios.test.ts` (POST 201, PATCH 200, estado 200 + login 403, 401/403 sin rol, 409 duplicado, sin `password_hash` en respuestas)
+- [x] T023 [P] [US2] Integration tests for admin CRUD in `backend/tests/integration/usuarios.test.ts` (POST 201, PATCH 200, estado 200 + login 403, 401/403 sin rol, 409 duplicado, sin `password_hash` en respuestas)
 
 ### Implementation for User Story 2
 
-- [ ] T024 [P] [US2] Create `backend/src/services/usuarios.service.ts` (listar operativos, crear, editar, estado lógico) per `contracts/usuarios-api.md`
-- [ ] T025 [US2] Create `backend/src/controllers/usuarios.controller.ts` + `backend/src/routes/usuarios.routes.ts` (all behind `requireRole('administrador')`)
-- [ ] T026 [US2] Create `frontend/src/pages/admin/UsuariosPage.tsx` (lista, formulario crear/editar, botón baja/reactivar, mensajes de éxito/error)
-- [ ] T027 [US2] Create `frontend/src/pages/admin/AdminLayout.tsx` (navegación del módulo admin) and wire `UsuariosPage` into `frontend/src/App.tsx`
+- [x] T024 [P] [US2] Create `backend/src/services/usuarios.service.ts` (listar operativos, crear, editar, estado lógico) per `contracts/usuarios-api.md`
+- [x] T025 [US2] Create `backend/src/controllers/usuarios.controller.ts` + `backend/src/routes/usuarios.routes.ts` (all behind `requireRole('administrador')`)
+- [x] T026 [US2] Create `frontend/src/pages/admin/UsuariosPage.tsx` (lista, formulario crear/editar, botón baja/reactivar, mensajes de éxito/error)
+- [x] T027 [US2] Create `frontend/src/pages/admin/AdminLayout.tsx` (navegación del módulo admin) and wire `UsuariosPage` into `frontend/src/App.tsx` — ruta ajustada a `frontend/src/layouts/AdminLayout.tsx` + `RoleHeader` compartido
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -115,14 +115,14 @@ verde y `docs/reglas.md` §20 requiere pruebas de autenticación y autorización
 
 ### Tests for User Story 3
 
-- [ ] T028 [P] [US3] Route guard tests in `frontend/src/routes/ProtectedRoute.test.tsx` (sin sesión → /login, otro rol → denegado, rol correcto → render)
+- [x] T028 [P] [US3] Route guard tests in `frontend/src/routes/ProtectedRoute.test.tsx` (sin sesión → /login, otro rol → denegado, rol correcto → render)
 
 ### Implementation for User Story 3
 
-- [ ] T029 [P] [US3] Create role layouts: `frontend/src/pages/caja/CajaLayout.tsx`, `frontend/src/pages/cocina/CocinaLayout.tsx`, `frontend/src/pages/clientes/ClienteLayout.tsx` (placeholders navegables con aviso de sprint)
-- [ ] T030 [P] [US3] Create placeholders `frontend/src/pages/clientes/MenuPage.tsx` (aviso: Sprint 2) and `frontend/src/pages/clientes/MisPedidosPage.tsx` (aviso: Sprint 5)
-- [ ] T031 [US3] Complete `frontend/src/App.tsx`: all 6 routes (`/login`, `/admin`, `/caja`, `/cocina`, `/menu`, `/mis-pedidos`) with role guards and login redirect map by role
-- [ ] T032 [US3] Responsive + tokens: setup Tailwind theme from `docs/DESIGN.md` in `frontend/src/index.css`, verify layouts in mobile/desktop, navigation shows only own-role links
+- [x] T029 [P] [US3] Create role layouts: `frontend/src/pages/caja/CajaLayout.tsx`, `frontend/src/pages/cocina/CocinaLayout.tsx`, `frontend/src/pages/clientes/ClienteLayout.tsx` (placeholders navegables con aviso de sprint) — rutas ajustadas a `frontend/src/layouts/` (junto al `AdminLayout` de T027) con `RoleHeader` compartido
+- [x] T030 [P] [US3] Create placeholders `frontend/src/pages/clientes/MenuPage.tsx` (aviso: Sprint 2) and `frontend/src/pages/clientes/MisPedidosPage.tsx` (aviso: Sprint 5) — rutas ajustadas a `pages/menu/` y `pages/pedidos/`; además esqueletos responsivos de caja/cocina con objetivos táctiles de 44 px (`size="touch"`) y colores de estado (`pages/caja/CajaPage.tsx`, `pages/cocina/CocinaPage.tsx`)
+- [x] T031 [US3] Complete `frontend/src/App.tsx`: all 6 routes (`/login`, `/admin`, `/caja`, `/cocina`, `/menu`, `/mis-pedidos`) with role guards and login redirect map by role
+- [x] T032 [US3] Responsive + tokens: setup Tailwind theme from `docs/DESIGN.md` in `frontend/src/index.css`, verify layouts in mobile/desktop, navigation shows only own-role links — tokens completos (colores, fuentes Plus Jakarta Sans/Inter, radios) y navegación por rol en cada layout
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -132,10 +132,10 @@ verde y `docs/reglas.md` §20 requiere pruebas de autenticación y autorización
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T033 [P] Security hardening: cookie flags (httpOnly/SameSite/Secure), no secrets in repo, uniform 401/403 messages, server-side validation review (FR-021…FR-024)
-- [ ] T034 Validate `quickstart.md` end-to-end (migraciones → seed → dev → gates)
-- [ ] T035 Documentation: `backend/README.md` and `frontend/README.md` with commands (dev, test, typecheck)
-- [ ] T036 Run full gates: `npm test` + `npm run typecheck` + lint in `backend/` and `frontend/` (criterio del sprint)
+- [x] T033 Security hardening: cookie flags (httpOnly/SameSite/Secure), no secrets in repo, uniform 401/403 messages, server-side validation review (FR-021…FR-024) — cookie `token` httpOnly+SameSite=Lax (+Secure en prod), `.env` fuera de git, mensajes 401 idénticos (test SC-S1-02), zod en todos los endpoints
+- [x] T034 Validate `quickstart.md` end-to-end (migraciones → seed → dev → gates) — migración idempotente, seed idempotente, proxy `/api` + login 200 end-to-end, quickstart corregido a la realidad (BD `cafe_itsh`, `npm run migrate/seed`, Node LTS)
+- [x] T035 Documentation: `backend/README.md` and `frontend/README.md` with commands (dev, test, typecheck)
+- [x] T036 Run full gates: `npm test` + `npm run typecheck` + lint in `backend/` and `frontend/` (criterio del sprint) — backend 19/19 + lint/typecheck verdes; frontend 6/6 + lint/typecheck/build verdes
 - [ ] T037 After demo approval: mark Sprint 1 completed in `docs/sprints.md`
 
 ---
