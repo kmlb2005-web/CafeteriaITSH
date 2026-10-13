@@ -87,7 +87,7 @@ consultan.
 
 ---
 
-## Sprint 3 — Pedido anticipado y pago
+## Sprint 3 — Pedido anticipado y pago ✅ COMPLETADO (demo aprobada 2026-10-13)
 
 **Feature**: `specs/004-advance-orders-payment/`
 

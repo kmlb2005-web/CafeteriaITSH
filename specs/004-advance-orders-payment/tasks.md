@@ -91,7 +91,7 @@ description: "Task list template for feature implementation"
 - [x] T017 [P] Documentation: update `backend/README.md` (endpoints de pedidos) and `frontend/README.md` (rutas /pedido/*)
 - [x] T018 Validate `quickstart.md` end-to-end (migración → flujo <3 min → rechazo → reintento → gates)
 - [x] T019 Run full gates: lint + typecheck + test en `backend/` y `frontend/` (+ build)
-- [ ] T020 After demo approval: marcar Sprint 3 completado en `docs/sprints.md`
+- [x] T020 After demo approval: marcar Sprint 3 completado en `docs/sprints.md` — demo aprobada por la patrocinadora 2026-10-13
 
 ---
 
