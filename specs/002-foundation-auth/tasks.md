@@ -30,7 +30,7 @@ verde y `docs/reglas.md` §20 requiere pruebas de autenticación y autorización
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 [P] Init git repo + create `.gitignore` (node_modules, `.env`, dist, coverage) in repository root
+- [x] T001 [P] Init git repo + create `.gitignore` (node_modules, `.env`, dist, coverage) in repository root
 - [ ] T002 Backend TypeScript scaffold: `backend/tsconfig.json` (strict), scripts `dev|build|test|typecheck` in `backend/package.json`, install express, mysql2, zod, bcrypt, jsonwebtoken, dotenv, vitest, supertest, tsx, typescript
 - [ ] T003 Frontend TypeScript migration: rename `frontend/src/*.jsx` → `.tsx`, `frontend/tsconfig.json` (strict), install react-router, tailwindcss, vitest, @testing-library/react
 - [ ] T004 [P] Lint configs: `backend/eslint.config.js` and keep `frontend/eslint.config.js` aligned (camelCase/PascalCase per reglas §18)
