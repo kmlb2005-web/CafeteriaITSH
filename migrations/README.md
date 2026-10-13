@@ -1,0 +1,11 @@
+-- ============================================================
+-- Migraciones del Sistema de Pedidos Anticipados — Cafetería ITSH
+-- Este directorio está vacío a propósito: el esquema inicial ya
+-- existe y fue creado por docs/001_crear_esquema.sql +
+-- docs/002_seed_inicial.sql (registrados como baseline por
+-- backend/scripts/migrate.mjs en su primera ejecución).
+--
+-- A partir de aquí, toda modificación de esquema del proyecto se
+-- agrega como NN_nombre_descriptivo.sql y se aplica con:
+--   cd backend && npm run migrate
+-- ============================================================
