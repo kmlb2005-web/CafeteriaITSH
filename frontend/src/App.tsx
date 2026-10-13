@@ -9,6 +9,8 @@ import { ClienteLayout } from './layouts/ClienteLayout'
 import LoginPage from './pages/login/LoginPage'
 import RegistroPage from './pages/registro/RegistroPage'
 import UsuariosPage from './pages/admin/UsuariosPage'
+import PlatillosPage from './pages/admin/PlatillosPage'
+import MenuDelDiaPage from './pages/admin/MenuDelDiaPage'
 import CajaPage from './pages/caja/CajaPage'
 import CocinaPage from './pages/cocina/CocinaPage'
 import MenuPage from './pages/menu/MenuPage'
@@ -50,6 +52,8 @@ export default function App() {
             }
           >
             <Route index element={<UsuariosPage />} />
+            <Route path="platillos" element={<PlatillosPage />} />
+            <Route path="menu" element={<MenuDelDiaPage />} />
           </Route>
 
           {/* Cajero — esqueletos en Sprint 1, pantalla en Sprint 4 */}

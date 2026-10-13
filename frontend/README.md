@@ -27,9 +27,11 @@ los tokens de `docs/DESIGN.md` y componentes base al estilo shadcn/ui.
 | `/login` | público | Sprint 1 |
 | `/registro` | público (clientes) | Sprint 1 |
 | `/admin` | administrador | Sprint 1 (gestión de usuarios) |
+| `/admin/platillos` | administrador | Sprint 2 (catálogo) |
+| `/admin/menu` | administrador | Sprint 2 (menú del día) |
 | `/caja` | cajero | esqueleto (pantalla en Sprint 4) |
 | `/cocina` | cocinero | esqueleto (pantalla en Sprint 4) |
-| `/menu` | cliente | placeholder (Sprint 2) |
+| `/menu` | cliente | Sprint 2 (consulta del menú) |
 | `/mis-pedidos` | cliente | placeholder (Sprint 5) |
 
 Sin sesión → redirige a `/login`; rol sin permiso → pantalla de **Acceso
