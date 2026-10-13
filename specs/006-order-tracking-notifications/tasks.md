@@ -67,7 +67,7 @@
   reintento de notificación, y aislamiento entre clientes).
 - [x] T014 [P] Gates completos en ambos paquetes: `npm run lint &&
   npm run typecheck && npm test` (+ `npm run build` en frontend).
-- [ ] T015 Demo final aprobada por la patrocinadora → marcar Sprint 5
-  completado en `docs/sprints.md` (cierre del MVP).
+- [x] T015 Demo final aprobada por la patrocinadora → marcar Sprint 5
+  completado en `docs/sprints.md` (cierre del MVP) — aprobada 2026-10-13
 
 

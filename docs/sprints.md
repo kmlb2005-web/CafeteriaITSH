@@ -140,7 +140,7 @@ todos los estados operativos.
 
 ---
 
-## Sprint 5 — Seguimiento, notificaciones y pulido
+## Sprint 5 — Seguimiento, notificaciones y pulido ✅ COMPLETADO (demo final aprobada 2026-10-13)
 
 **Feature**: `specs/006-order-tracking-notifications/`
 
