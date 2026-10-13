@@ -37,6 +37,22 @@ function passwordAleatoria(): string {
   return randomBytes(9).toString('base64url');
 }
 
+/** Menú de ejemplo para la fecha actual (R6): idempotente con INSERT IGNORE. */
+const MENU_DE_HOY: ReadonlyArray<{
+  nombre: string;
+  precio: number;
+  especial: boolean;
+}> = [
+  { nombre: 'Gordita de chicharrón', precio: 35, especial: true },
+  { nombre: 'Gordita de frijol', precio: 30, especial: false },
+  { nombre: 'Quesadilla de queso', precio: 25, especial: false },
+  { nombre: 'Torta de jamón', precio: 45, especial: false },
+  { nombre: 'Café de olla', precio: 20, especial: true },
+  { nombre: 'Jugo de naranja', precio: 25, especial: false },
+  { nombre: 'Agua de horchata', precio: 15, especial: false },
+  { nombre: 'Pan con huevo', precio: 28, especial: false },
+];
+
 async function main(): Promise<void> {
   // Roles (INSERT IGNORE por clave única nombre)
   await execute('INSERT IGNORE INTO rol (nombre) VALUES ?', [
@@ -68,6 +84,22 @@ async function main(): Promise<void> {
           : '  ← generada; guarda este valor (no se repetirá)'),
     );
   }
+
+  // Menú de hoy (R6): solo lo crea si falta; nunca pisa precios editados
+  let creados = 0;
+  for (const item of MENU_DE_HOY) {
+    const resultado = await execute(
+      `INSERT IGNORE INTO menu_dia (fecha, platillo_id, precio, disponible, especial)
+       SELECT CURDATE(), id, ?, TRUE, ? FROM platillo WHERE nombre = ?`,
+      [item.precio, item.especial, item.nombre],
+    );
+    creados += resultado.affectedRows;
+  }
+  console.log(
+    creados > 0
+      ? `Menú de hoy creado con ${creados} platillos.`
+      : 'Menú de hoy ya existía (sin cambios).',
+  );
 
   await closePool();
 }

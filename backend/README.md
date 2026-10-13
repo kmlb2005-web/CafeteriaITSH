@@ -48,6 +48,11 @@ scripts/migrate.mjs  # runner de migraciones
 - `GET  /api/auth/me` — usuario en sesión
 - `GET|POST /api/usuarios`, `PATCH /api/usuarios/:id[...]` — gestión
   (solo administrador)
+- `GET  /api/menu?fecha=` — consulta del menú del día (cualquier sesión)
+- `GET|POST /api/admin/platillos`, `PATCH /api/admin/platillos/:id` —
+  catálogo (solo administrador)
+- `GET|PUT /api/admin/menu`, `DELETE /api/admin/menu/:id` — publicar el
+  menú del día: alta/edición (upsert) y quitar renglones (solo administrador)
 - `GET  /api/health` — salud del servicio
 
 Errores con formato `{ "error": { "code", "message" } }` (reglas §15).

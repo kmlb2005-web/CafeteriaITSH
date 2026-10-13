@@ -7,6 +7,8 @@ export const pool: Pool = mysql.createPool({
   uri: env.DATABASE_URL,
   connectionLimit: 10,
   waitForConnections: true,
+  // NUMERIC/DECIMAL (p. ej. precios) llegan como número, no como string
+  decimalNumbers: true,
 });
 
 /** Consulta simple que devuelve filas tipadas. */
