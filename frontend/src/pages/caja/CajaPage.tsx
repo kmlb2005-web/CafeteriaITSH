@@ -271,7 +271,7 @@ export default function CajaPage() {
                   </Button>
                   <span
                     aria-label={`Cantidad de ${item.nombre}`}
-                    className="w-8 text-center text-base font-semibold"
+                    className="w-9 text-center text-xl font-bold"
                   >
                     {cantidades[item.id] ?? 0}
                   </span>
@@ -322,9 +322,11 @@ export default function CajaPage() {
 
             {ultimo && !ultimo.pagado && (
               <div className="grid gap-2 rounded-md border border-destructive/40 bg-surface-container-low p-3">
+                <p className="font-mono text-xl font-bold">
+                  {ultimo.pedido.numero}
+                </p>
                 <p className="text-sm font-medium">
-                  El pedido {ultimo.pedido.numero} quedó Pendiente: el cobro no
-                  pasó.
+                  El pedido quedó Pendiente: el cobro no pasó.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Button
@@ -352,9 +354,11 @@ export default function CajaPage() {
 
             {ultimo?.pagado && (
               <div className="rounded-md border border-primary/40 bg-surface-container-low p-3">
+                <p className="font-mono text-xl font-bold">
+                  {ultimo.pedido.numero}
+                </p>
                 <p className="text-sm font-semibold">
-                  Pedido {ultimo.pedido.numero} cobrado ({ultimo.pedido.estado}
-                  ).
+                  Cobrado · {ultimo.pedido.estado}.
                 </p>
                 <Button
                   type="button"
@@ -398,7 +402,7 @@ export default function CajaPage() {
                 className="grid gap-2 rounded-md border border-border bg-surface-container-low p-3"
               >
                 <div>
-                  <p className="text-sm font-semibold">{p.numero}</p>
+                  <p className="font-mono text-xl font-bold">{p.numero}</p>
                   <p className="text-xs text-muted-foreground">
                     {p.cliente_nombre ?? 'Sin nombre'} ·{' '}
                     {p.partidas

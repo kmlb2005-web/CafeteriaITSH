@@ -162,18 +162,16 @@ export default function CocinaPage() {
             <Card key={pedido.id}>
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-heading text-lg font-bold text-primary">
+                  <span className="font-heading text-xl font-extrabold text-primary">
                     #{pedido.orden}
                   </span>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-container-low px-3 py-1 text-sm font-medium">
-                    <span
-                      aria-hidden="true"
-                      className={`h-3 w-3 rounded-full ${COLOR_ESTADO[pedido.estado] ?? 'bg-status-pending'}`}
-                    />
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${COLOR_ESTADO[pedido.estado] ?? 'bg-status-pending'}`}
+                  >
                     {pedido.estado}
                   </span>
                 </div>
-                <CardTitle className="text-base">{pedido.numero}</CardTitle>
+                <CardTitle className="font-mono text-xl">{pedido.numero}</CardTitle>
                 <CardDescription>
                   {pedido.tipo === 'anticipado' ? 'Anticipado' : 'Mostrador'}
                   {pedido.cliente_nombre ? ` · ${pedido.cliente_nombre}` : ''} ·{' '}
@@ -190,7 +188,9 @@ export default function CocinaPage() {
                       key={`${pedido.id}-${partida.nombre}-${i}`}
                       className="text-sm"
                     >
-                      <span className="font-semibold">{partida.cantidad}×</span>{' '}
+                      <span className="text-xl font-extrabold">
+                        {partida.cantidad}×
+                      </span>{' '}
                       {partida.nombre}
                     </li>
                   ))}

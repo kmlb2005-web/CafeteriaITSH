@@ -32,6 +32,15 @@ function formatearPrecio(precio: number): string {
   return `$${precio.toFixed(2)}`
 }
 
+const COLOR_ESTADO: Record<string, string> = {
+  Pendiente: 'bg-status-pending',
+  Pagado: 'bg-status-paid',
+  'En preparación': 'bg-status-preparing',
+  Listo: 'bg-status-ready',
+  Entregado: 'bg-status-delivered',
+  Cancelado: 'bg-status-cancelled',
+}
+
 /**
  * Confirmación del pedido recién creado (US2, FR-014): consulta el estado
  * real al montar — la fuente de verdad es el servidor (caso borde: la
@@ -98,11 +107,7 @@ export default function ConfirmacionPage() {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <CardTitle>Confirmación de pedido</CardTitle>
             <span
-              className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                pagado
-                  ? 'bg-primary/15 text-primary'
-                  : 'bg-secondary text-secondary-foreground'
-              }`}
+              className={`rounded-full px-2.5 py-1 text-xs font-semibold text-white ${COLOR_ESTADO[pedido.estado] ?? 'bg-status-pending'}`}
             >
               {pedido.estado}
             </span>

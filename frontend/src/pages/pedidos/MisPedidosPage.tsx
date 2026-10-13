@@ -168,7 +168,7 @@ export default function MisPedidosPage() {
   }
 
   return (
-    <div className="grid gap-3">
+    <div className="mx-auto grid max-w-2xl gap-3">
       <h1 className="font-heading text-xl font-bold">Mis pedidos</h1>
 
       {pedidos.map((p) => {
@@ -179,11 +179,9 @@ export default function MisPedidosPage() {
             <CardHeader className="pb-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-mono text-sm font-semibold">{p.numero}</span>
-                <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-container-low px-3 py-1 text-sm font-medium">
-                  <span
-                    aria-hidden="true"
-                    className={`h-3 w-3 rounded-full ${COLOR_ESTADO[p.estado] ?? 'bg-status-pending'}`}
-                  />
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${COLOR_ESTADO[p.estado] ?? 'bg-status-pending'}`}
+                >
                   {p.estado}
                 </span>
               </div>

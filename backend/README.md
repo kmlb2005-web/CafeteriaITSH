@@ -50,6 +50,8 @@ scripts/migrate.mjs  # runner de migraciones
   (solo administrador)
 - `GET  /api/menu?fecha=` — consulta del menú del día (cualquier sesión)
 - `POST /api/pedidos` — crear pedido anticipado ≥10 min (rol `usuario`)
+- `GET  /api/pedidos` — mis pedidos con el estado vigente (Sprint 5;
+  reintentan el aviso de pedido listo los pedidos `Listo`)
 - `GET  /api/pedidos/:id` — detalle del pedido propio (ajeno → 404)
 - `POST /api/pedidos/:id/pago` — confirmar pago (adaptador simulado, sin
   datos de tarjeta; `Pendiente → Pagado` solo con pago confirmado)
@@ -76,3 +78,26 @@ Los cambios de estado se validan contra la tabla `transicion_estado` (flujo
 los terminales (`Entregado`, `Cancelado`) no tienen transiciones salientes y
 responden `409 transicion_invalida`. Errores con formato
 `{ "error": { "code", "message" } }` (reglas §15).
+
+## Despliegue y configuración por entorno (FR-026)
+
+Configuraciones **separadas de desarrollo y producción**; las variables se
+declaran en `src/config/env.ts` (zod) y su plantilla es `.env.example`:
+
+- **Desarrollo**: `backend/.env` con `NODE_ENV=development` y
+  `npm run dev`. Los adaptadores de pago (`services/pasarela.ts`) y de correo
+  (`services/correo.ts`) están **simulados** (sin red real);
+  `SIMULAR_FALLO_CORREO=true` solo sirve para demostrar el fallo y reintento
+  del aviso de pedido listo.
+- **Producción**: variables en el hosting con `NODE_ENV=production` y valores
+  propios de cada entorno:
+  - `JWT_SECRET` aleatorio y fuerte, distinto al de desarrollo.
+  - `DATABASE_URL` de una instancia MySQL 8 administrada (p. ej. Railway,
+    Aiven o Clever Cloud); aplicar `npm run migrate && npm run seed` una vez.
+  - `SIMULAR_FALLO_CORREO=false`; al contratar proveedores reales se
+    sustituyen `services/pasarela.ts` y `services/correo.ts` sin tocar el
+    resto de la lógica.
+- Hosting de bajo costo con Node LTS (Railway, Render, Fly.io): arranque con
+  `npm run build && npm start`. HTTPS obligatorio en producción (reglas §13)
+  y `.env` jamás se versiona (§21).
+- Salud: `GET /api/health` para el chequeo del hosting.

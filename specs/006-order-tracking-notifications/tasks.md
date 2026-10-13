@@ -56,17 +56,18 @@
 
 ## Phase 5: Polish & Security (US3)
 
-- [ ] T011 [P] [US3] Pulido UI contra `docs/DESIGN.md`: estados
+- [x] T011 [P] [US3] Pulido UI contra `docs/DESIGN.md`: estados
   vacíos/error consistentes en pantallas nuevas y revisión de
   responsividad (móvil y computadora, FR-020).
-- [ ] T012 [P] [US3] Docs FR-026: sección de despliegue en
+- [x] T012 [P] [US3] Docs FR-026: sección de despliegue en
   `backend/README.md` y `frontend/README.md` (`.env.example`, `NODE_ENV`,
   hosting de bajo costo); README de la feature si existe.
-- [ ] T013 [US3] Cadena e2e del flujo completo según
+- [x] T013 [US3] Cadena e2e del flujo completo según
   `specs/006-order-tracking-notifications/quickstart.md` (incluye fallo y
   reintento de notificación, y aislamiento entre clientes).
-- [ ] T014 [P] Gates completos en ambos paquetes: `npm run lint &&
+- [x] T014 [P] Gates completos en ambos paquetes: `npm run lint &&
   npm run typecheck && npm test` (+ `npm run build` en frontend).
 - [ ] T015 Demo final aprobada por la patrocinadora → marcar Sprint 5
   completado en `docs/sprints.md` (cierre del MVP).
+
 

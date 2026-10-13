@@ -35,10 +35,21 @@ los tokens de `docs/DESIGN.md` y componentes base al estilo shadcn/ui.
 | `/pedido/confirmar` | cliente | Sprint 3 (revisión + total + 10 min) |
 | `/pedido/:id/pago` | cliente | Sprint 3 (pago simulado) |
 | `/pedido/:id/confirmacion` | cliente | Sprint 3 (folio y estado) |
-| `/mis-pedidos` | cliente | placeholder (Sprint 5) |
+| `/mis-pedidos` | cliente | Sprint 5 (lista, detalle y aviso de listo) |
 
 Sin sesión → redirige a `/login`; rol sin permiso → pantalla de **Acceso
 denegado**.
+
+## Despliegue (FR-026)
+
+- **Desarrollo**: `npm run dev` (5173) con proxy de `/api` hacia el backend
+  en 3000.
+- **Producción**: `npm run build` genera `dist/` estático para un hosting de
+  bajo costo (Vercel, Netlify, Cloudflare Pages o el free tier de Railway/
+  Render). No usa variables de entorno: las llamadas son rutas relativas
+  `/api`, por lo que en producción deben resolverse en el mismo origen
+  (rewrite/proxy del hosting hacia la API, o servir `dist/` desde el propio
+  backend). HTTPS obligatorio en producción (reglas §13).
 
 ## Estructura
 
