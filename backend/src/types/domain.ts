@@ -90,6 +90,20 @@ export interface PedidoCocina {
   partidas: { nombre: string; cantidad: number }[];
 }
 
+/** Fila de "mis pedidos": lista liviana con el aviso de listo (Sprint 5). */
+export interface PedidoLista {
+  id: number;
+  numero: string;
+  tipo: 'anticipado' | 'mostrador';
+  estado: string;
+  total: number;
+  /** `YYYY-MM-DDTHH:mm` (hora local) en pedidos anticipados. */
+  fecha_recoleccion: string | null;
+  creado_en: string;
+  /** true cuando el pedido está `Listo`: aviso in-app "Listo para recoger". */
+  aviso_listo: boolean;
+}
+
 /** Pago 1:1 con el pedido; jamás incluye datos de tarjeta (SC-S3-04). */
 export interface Pago {
   metodo: 'online' | 'efectivo';

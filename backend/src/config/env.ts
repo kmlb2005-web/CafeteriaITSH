@@ -21,6 +21,11 @@ const envSchema = z.object({
   SEED_ADMIN_PASSWORD: z.string().default(''),
   SEED_CAJERO_PASSWORD: z.string().default(''),
   SEED_COCINERO_PASSWORD: z.string().default(''),
+  // Solo demo/pruebas: fuerza el fallo del envío de correos (Sprint 5)
+  SIMULAR_FALLO_CORREO: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((valor) => valor === 'true'),
 });
 
 const parsed = envSchema.safeParse(process.env);

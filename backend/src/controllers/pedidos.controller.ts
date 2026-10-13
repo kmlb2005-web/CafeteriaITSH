@@ -3,9 +3,11 @@ import { z } from 'zod';
 import { ApiError } from '../middleware/error.js';
 import {
   crearPedidoAnticipado,
+  listarMisPedidos,
   obtenerPedido,
   registrarPago,
 } from '../services/pedidos.service.js';
+import { asegurarNotificacionListo } from '../services/notificaciones.service.js';
 
 const esquemaCrear = z.object({
   items: z
@@ -67,4 +69,20 @@ export async function pagar(req: Request, res: Response): Promise<void> {
 export async function obtener(req: Request, res: Response): Promise<void> {
   const id = esquemaId.parse(req.params['id']);
   res.json(await obtenerPedido(id, usuarioActual(req)));
+}
+
+/**
+ * "Mis pedidos" (FR-014, Sprint 5): lista propia con el estado vigente.
+ * Efecto secundario: se asegura la notificación de los pedidos `Listo`
+ * (crear si falta, reintentar si el envío falló — research R4).
+ */
+export async function listar(req: Request, res: Response): Promise<void> {
+  const usuarioId = usuarioActual(req);
+  const pedidos = await listarMisPedidos(usuarioId);
+  for (const pedido of pedidos) {
+    if (pedido.aviso_listo) {
+      await asegurarNotificacionListo(pedido.id);
+    }
+  }
+  res.json({ pedidos });
 }

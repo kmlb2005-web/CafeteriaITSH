@@ -5,6 +5,7 @@ import { ApiError } from '../middleware/error.js';
 import type {
   Pedido,
   PedidoCocina,
+  PedidoLista,
   PedidoOperativo,
   PartidaPedido,
   Pago,
@@ -806,6 +807,35 @@ export async function listarPedidosCocina(): Promise<PedidoCocina[]> {
         nombre: p.nombre,
         cantidad: p.cantidad,
       })),
+    }),
+  );
+}
+
+/** Pedidos propios del cliente, más recientes primero (FR-014, Sprint 5). */
+export async function listarMisPedidos(
+  usuarioId: number,
+): Promise<PedidoLista[]> {
+  const filas = await query<FilaOperativa>(
+    `SELECT p.id, p.numero, p.tipo, e.nombre AS estado, p.total,
+            p.cliente_nombre, p.fecha_recoleccion, p.creado_en
+     FROM pedido p
+     JOIN estado_pedido e ON e.id = p.estado_id
+     WHERE p.usuario_id = ?
+     ORDER BY p.creado_en DESC, p.id DESC`,
+    [usuarioId],
+  );
+  return filas.map(
+    (f): PedidoLista => ({
+      id: f.id,
+      numero: f.numero,
+      tipo: f.tipo === 'mostrador' ? 'mostrador' : 'anticipado',
+      estado: f.estado,
+      total: Number(f.total),
+      fecha_recoleccion: f.fecha_recoleccion
+        ? formatearLocal(new Date(f.fecha_recoleccion))
+        : null,
+      creado_en: new Date(f.creado_en).toISOString(),
+      aviso_listo: f.estado === 'Listo',
     }),
   );
 }

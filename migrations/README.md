@@ -23,3 +23,8 @@
 -- `pedido.tipo` ya admite 'mostrador' y `pago.metodo` ya admite 'efectivo'.
 -- (research.md R1 de specs/005-counter-kitchen)
 -- ============================================================
+-- Nota (Sprint 5): tampoco requiere migración. La tabla `notificacion`
+-- (aviso de pedido listo, con `idx_notificacion_pendiente`) ya existe en el
+-- baseline; el reintento usa el modelo append-only (research.md R1 de
+-- specs/006-order-tracking-notifications).
+-- ============================================================

@@ -5,6 +5,7 @@ import {
   listarPedidosCocina,
   transicionarEstado,
 } from '../services/pedidos.service.js';
+import { asegurarNotificacionListo } from '../services/notificaciones.service.js';
 
 /**
  * Cocina (US2, FR-017/FR-018): lista de pedidos activos y avance de
@@ -37,11 +38,18 @@ export async function listar(req: Request, res: Response): Promise<void> {
 export async function cambiarEstado(req: Request, res: Response): Promise<void> {
   const id = esquemaId.parse(req.params['id']);
   const datos = esquemaEstado.parse(req.body);
-  res.json(
-    await transicionarEstado({
-      pedidoId: id,
-      hacia: datos.estado,
-      cambiadoPor: usuarioActual(req),
-    }),
-  );
+  const pedido = await transicionarEstado({
+    pedidoId: id,
+    hacia: datos.estado,
+    cambiadoPor: usuarioActual(req),
+  });
+
+  // FR-019 (Sprint 5): al marcar Listo se avisa al cliente. El servicio de
+  // notificaciones nunca propaga errores: el estado del pedido no se ve
+  // afectado si el envío falla (research R3).
+  if (datos.estado === 'Listo') {
+    await asegurarNotificacionListo(pedido.id);
+  }
+
+  res.json(pedido);
 }
