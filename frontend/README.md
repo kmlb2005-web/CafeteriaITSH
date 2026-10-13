@@ -1,16 +1,48 @@
-# React + Vite
+# Frontend — UI del Sistema de Pedidos Anticipados (Cafetería ITSH)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SPA única con rutas por rol (React + TypeScript + Vite), Tailwind CSS v4 con
+los tokens de `docs/DESIGN.md` y componentes base al estilo shadcn/ui.
 
-Currently, two official plugins are available:
+## Requisitos
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Node.js LTS y npm.
+- Backend corriendo en `http://localhost:3000` (el dev server hace proxy de
+  `/api` hacia allá).
 
-## React Compiler
+## Comandos
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Comando | Descripción |
+|---------|-------------|
+| `npm run dev` | Dev server Vite (puerto 5173) |
+| `npm test` | Tests con Vitest + Testing Library (jsdom) |
+| `npm run typecheck` | Chequeo de tipos (`tsc --noEmit`, strict) |
+| `npm run lint` | ESLint (JS/TS/TSX, reglas alineadas con backend) |
+| `npm run build` | Build de producción en `dist/` |
+| `npm run preview` | Sirve el build de producción |
 
-## Expanding the ESLint configuration
+## Rutas
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Ruta | Rol permitido | Estado |
+|------|---------------|--------|
+| `/login` | público | Sprint 1 |
+| `/admin` | administrador | Sprint 1 (gestión de usuarios) |
+| `/caja` | cajero | esqueleto (pantalla en Sprint 4) |
+| `/cocina` | cocinero | esqueleto (pantalla en Sprint 4) |
+| `/menu` | cliente | placeholder (Sprint 2) |
+| `/mis-pedidos` | cliente | placeholder (Sprint 5) |
+
+Sin sesión → redirige a `/login`; rol sin permiso → pantalla de **Acceso
+denegado**.
+
+## Estructura
+
+```
+src/
+  lib/            # api (fetch tipado), auth (contexto), roles, utils (cn)
+  components/ui/  # componentes base (button, input, label, card)
+  components/     # RoleHeader compartido por layouts
+  layouts/        # AdminLayout, CajaLayout, CocinaLayout, ClienteLayout
+  pages/          # pantallas por módulo (login, admin, caja, cocina, ...)
+  routes/         # ProtectedRoute (guard de sesión + rol) y sus tests
+  test/setup.ts   # setup de Testing Library
+```
