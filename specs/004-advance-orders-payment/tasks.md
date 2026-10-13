@@ -30,8 +30,8 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Prepare shared pieces needed by both stories
 
-- [ ] T001 [P] Create `migrations/001_pago_estado.sql` (columna `estado` en `pago`, R1) + aplicar con `cd backend && npm run migrate` + nota en `migrations/README.md`
-- [ ] T002 [P] Create `backend/src/services/pasarela.ts` — adaptador de pago simulado `cobrar()` sin datos de tarjeta, con `simular_rechazo` (R2)
+- [x] T001 [P] Create `migrations/001_pago_estado.sql` (columna `estado` en `pago`, R1) + aplicar con `cd backend && npm run migrate` + nota en `migrations/README.md`
+- [x] T002 [P] Create `backend/src/services/pasarela.ts` — adaptador de pago simulado `cobrar()` sin datos de tarjeta, con `simular_rechazo` (R2)
 
 ---
 
@@ -39,8 +39,8 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Core types and shared client utilities that MUST exist before ANY user story can be implemented
 
-- [ ] T003 [P] Tipos de dominio en `backend/src/types/domain.ts`: `Pedido`, `PartidaPedido`, `Pago` (proyecciones de data-model.md)
-- [ ] T004 [P] Create `frontend/src/lib/carrito.ts` — carrito persistente en `localStorage` (leer/agregar/actualizar/quitar/vaciar/total, R6)
+- [x] T003 [P] Tipos de dominio en `backend/src/types/domain.ts`: `Pedido`, `PartidaPedido`, `Pago` (proyecciones de data-model.md)
+- [x] T004 [P] Create `frontend/src/lib/carrito.ts` — carrito persistente en `localStorage` (leer/agregar/actualizar/quitar/vaciar/total, R6)
 
 ---
 
@@ -52,18 +52,18 @@ description: "Task list template for feature implementation"
 
 ### Tests for User Story 1
 
-- [ ] T005 [P] [US1] Integration tests `backend/tests/integration/pedidos.test.ts`: creación 201 (folio, `Pendiente`, total=partidas); <10 min → 400 `anticipacion_insuficiente`; recogida otro día → 400; item no disponible/inactivo → 409; items vacíos → 400; pago OK → 200 `Pagado` + `pago.monto = total` sin campos de tarjeta; rechazo (mock de `pasarela`) → 402 y sigue `Pendiente`; reintento → `Pagado` con **1 solo** `pago`; segundo pago → 409; rol cajero → 403; sin sesión → 401
-- [ ] T006 [P] [US1] Component test `frontend/src/pages/pedidos/ConfirmarPedidoPage.test.tsx` (partidas y total desde el carrito; hora <10 min → error local sin fetch; éxito → navega a la pantalla de pago)
-- [ ] T007 [P] [US1] Component test `frontend/src/pages/pedidos/PagoPage.test.tsx` (muestra folio y total; pagar → éxito navega a confirmación; rechazo → mensaje claro y permanece en la página)
+- [x] T005 [P] [US1] Integration tests `backend/tests/integration/pedidos.test.ts`: creación 201 (folio, `Pendiente`, total=partidas); <10 min → 400 `anticipacion_insuficiente`; recogida otro día → 400; item no disponible/inactivo → 409; items vacíos → 400; pago OK → 200 `Pagado` + `pago.monto = total` sin campos de tarjeta; rechazo (mock de `pasarela`) → 402 y sigue `Pendiente`; reintento → `Pagado` con **1 solo** `pago`; segundo pago → 409; rol cajero → 403; sin sesión → 401
+- [x] T006 [P] [US1] Component test `frontend/src/pages/pedidos/ConfirmarPedidoPage.test.tsx` (partidas y total desde el carrito; hora <10 min → error local sin fetch; éxito → navega a la pantalla de pago)
+- [x] T007 [P] [US1] Component test `frontend/src/pages/pedidos/PagoPage.test.tsx` (muestra folio y total; pagar → éxito navega a confirmación; rechazo → mensaje claro y permanece en la página)
 
 ### Implementation for User Story 1
 
-- [ ] T008 [P] [US1] Create `backend/src/services/pedidos.service.ts` (`crearPedidoAnticipado` transaccional con validaciones de menú/10-min/fecha, folio con reintento; `registrarPago` con `FOR UPDATE` + transición `Pendiente → Pagado` vía `transicion_estado` + historial, R3–R5, R7)
-- [ ] T009 [US1] Create `backend/src/controllers/pedidos.controller.ts` + `backend/src/routes/pedidos.routes.ts` (`POST /api/pedidos`, `POST /api/pedidos/:id/pago` tras `requireRole('usuario')`, zod) and mount in `backend/src/app.ts`
-- [ ] T010 [P] [US1] Update `frontend/src/pages/menu/MenuPage.tsx` (cantidad + "Agregar al pedido", badge con total, botón "No disponible" ausente) + test adicional en `MenuPage.test.tsx` (no seleccionable + agregar al carrito)
-- [ ] T011 [US1] Create `frontend/src/pages/pedidos/ConfirmarPedidoPage.tsx` (partidas editables, total antes de confirmar, hora de recolección con validación local ≥10 min, confirmar → POST y limpiar carrito)
-- [ ] T012 [US1] Create `frontend/src/pages/pedidos/PagoPage.tsx` (folio + total, pagar con adaptador simulado, "simular rechazo (demo)", reintento sin duplicar)
-- [ ] T013 [US1] Update `frontend/src/App.tsx`: rutas `/pedido/confirmar`, `/pedido/:id/pago`, `/pedido/:id/confirmacion` dentro del bloque de cliente
+- [x] T008 [P] [US1] Create `backend/src/services/pedidos.service.ts` (`crearPedidoAnticipado` transaccional con validaciones de menú/10-min/fecha, folio con reintento; `registrarPago` con `FOR UPDATE` + transición `Pendiente → Pagado` vía `transicion_estado` + historial, R3–R5, R7)
+- [x] T009 [US1] Create `backend/src/controllers/pedidos.controller.ts` + `backend/src/routes/pedidos.routes.ts` (`POST /api/pedidos`, `POST /api/pedidos/:id/pago` tras `requireRole('usuario')`, zod) and mount in `backend/src/app.ts`
+- [x] T010 [P] [US1] Update `frontend/src/pages/menu/MenuPage.tsx` (cantidad + "Agregar al pedido", badge con total, botón "No disponible" ausente) + test adicional en `MenuPage.test.tsx` (no seleccionable + agregar al carrito)
+- [x] T011 [US1] Create `frontend/src/pages/pedidos/ConfirmarPedidoPage.tsx` (partidas editables, total antes de confirmar, hora de recolección con validación local ≥10 min, confirmar → POST y limpiar carrito)
+- [x] T012 [US1] Create `frontend/src/pages/pedidos/PagoPage.tsx` (folio + total, pagar con adaptador simulado, "simular rechazo (demo)", reintento sin duplicar)
+- [x] T013 [US1] Update `frontend/src/App.tsx`: rutas `/pedido/confirmar`, `/pedido/:id/pago`, `/pedido/:id/confirmacion` dentro del bloque de cliente
 
 ---
 
@@ -75,12 +75,12 @@ description: "Task list template for feature implementation"
 
 ### Tests for User Story 2
 
-- [ ] T014 [P] [US2] Component test `frontend/src/pages/pedidos/ConfirmacionPage.test.tsx` (folio/estado/partidas/total; `Pendiente` muestra botón "Pagar ahora"; error de red → mensaje + Reintentar)
+- [x] T014 [P] [US2] Component test `frontend/src/pages/pedidos/ConfirmacionPage.test.tsx` (folio/estado/partidas/total; `Pendiente` muestra botón "Pagar ahora"; error de red → mensaje + Reintentar)
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] `obtenerPedido(id, usuario_id)` en `backend/src/services/pedidos.service.ts` + `GET /api/pedidos/:id` en controller/ruta (404 para pedidos ajenos; estado resuelto como nombre)
-- [ ] T016 [US2] Create `frontend/src/pages/pedidos/ConfirmacionPage.tsx` (detalle real al montar, badge de estado, pagar si `Pendiente`, folio visible)
+- [x] T015 [US2] `obtenerPedido(id, usuario_id)` en `backend/src/services/pedidos.service.ts` + `GET /api/pedidos/:id` en controller/ruta (404 para pedidos ajenos; estado resuelto como nombre)
+- [x] T016 [US2] Create `frontend/src/pages/pedidos/ConfirmacionPage.tsx` (detalle real al montar, badge de estado, pagar si `Pendiente`, folio visible)
 
 ---
 
@@ -88,9 +88,9 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T017 [P] Documentation: update `backend/README.md` (endpoints de pedidos) and `frontend/README.md` (rutas /pedido/*)
-- [ ] T018 Validate `quickstart.md` end-to-end (migración → flujo <3 min → rechazo → reintento → gates)
-- [ ] T019 Run full gates: lint + typecheck + test en `backend/` y `frontend/` (+ build)
+- [x] T017 [P] Documentation: update `backend/README.md` (endpoints de pedidos) and `frontend/README.md` (rutas /pedido/*)
+- [x] T018 Validate `quickstart.md` end-to-end (migración → flujo <3 min → rechazo → reintento → gates)
+- [x] T019 Run full gates: lint + typecheck + test en `backend/` y `frontend/` (+ build)
 - [ ] T020 After demo approval: marcar Sprint 3 completado en `docs/sprints.md`
 
 ---
