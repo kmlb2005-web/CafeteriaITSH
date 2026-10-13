@@ -18,3 +18,8 @@
 -- migración nueva es `001_pago_estado.sql` (estado del pago).
 -- (research.md R1 de specs/004-advance-orders-payment)
 -- ============================================================
+-- Nota (Sprint 4): tampoco requiere migración. Los 6 estados y las 8
+-- transiciones del flujo vienen sembrados en `docs/002_seed_inicial.sql`;
+-- `pedido.tipo` ya admite 'mostrador' y `pago.metodo` ya admite 'efectivo'.
+-- (research.md R1 de specs/005-counter-kitchen)
+-- ============================================================

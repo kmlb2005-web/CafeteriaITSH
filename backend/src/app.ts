@@ -5,6 +5,8 @@ import { usuariosRoutes } from './routes/usuarios.routes.js';
 import { adminMenuRoutes } from './routes/admin-menu.routes.js';
 import { menuRoutes } from './routes/menu.routes.js';
 import { pedidosRoutes } from './routes/pedidos.routes.js';
+import { cajaRoutes } from './routes/caja.routes.js';
+import { cocinaRoutes } from './routes/cocina.routes.js';
 
 export function crearApp(): express.Express {
   const app = express();
@@ -16,12 +18,15 @@ export function crearApp(): express.Express {
     res.json({ status: 'ok', servicio: 'cafeteria-api' });
   });
 
-  // Las rutas se montan por módulo (T019: auth, T025: usuarios, Sprint 2: menú)
+  // Las rutas se montan por módulo (T019: auth, T025: usuarios, Sprint 2: menú,
+  // Sprint 3: pedidos, Sprint 4: caja y cocina)
   app.use('/api/auth', authRoutes);
   app.use('/api/usuarios', usuariosRoutes);
   app.use('/api/admin', adminMenuRoutes);
   app.use('/api/menu', menuRoutes);
   app.use('/api/pedidos', pedidosRoutes);
+  app.use('/api/caja', cajaRoutes);
+  app.use('/api/cocina', cocinaRoutes);
 
   app.use(notFound);
   app.use(errorHandler);

@@ -70,11 +70,32 @@ export interface Pedido {
   partidas: PartidaPedido[];
 }
 
+/** Pedido de la lista de entregas de caja (Sprint 4, US1.6). */
+export interface PedidoOperativo extends Pedido {
+  cliente_nombre: string | null;
+}
+
+/** Fila del KDS de cocina: sin precios, con su posición en la cola (R5/R6). */
+export interface PedidoCocina {
+  id: number;
+  numero: string;
+  tipo: 'anticipado' | 'mostrador';
+  estado: string;
+  cliente_nombre: string | null;
+  /** `YYYY-MM-DDTHH:mm` (hora local) en pedidos anticipados. */
+  fecha_recoleccion: string | null;
+  creado_en: string;
+  /** Posición en la cola de preparación (1 = llegó primero). */
+  orden: number;
+  partidas: { nombre: string; cantidad: number }[];
+}
+
 /** Pago 1:1 con el pedido; jamás incluye datos de tarjeta (SC-S3-04). */
 export interface Pago {
   metodo: 'online' | 'efectivo';
   monto: number;
-  referencia: string;
+  /** `null` en cobros de mostrador: no hay pasarela (Sprint 4, R4). */
+  referencia: string | null;
   estado: 'pendiente' | 'confirmado' | 'rechazado';
 }
 
