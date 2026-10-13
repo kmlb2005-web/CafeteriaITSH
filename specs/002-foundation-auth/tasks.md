@@ -137,7 +137,7 @@ verde y `docs/reglas.md` §20 requiere pruebas de autenticación y autorización
 - [x] T034 Validate `quickstart.md` end-to-end (migraciones → seed → dev → gates) — migración idempotente, seed idempotente, proxy `/api` + login 200 end-to-end, quickstart corregido a la realidad (BD `cafe_itsh`, `npm run migrate/seed`, Node LTS)
 - [x] T035 Documentation: `backend/README.md` and `frontend/README.md` with commands (dev, test, typecheck)
 - [x] T036 Run full gates: `npm test` + `npm run typecheck` + lint in `backend/` and `frontend/` (criterio del sprint) — backend 19/19 + lint/typecheck verdes; frontend 6/6 + lint/typecheck/build verdes
-- [ ] T037 After demo approval: mark Sprint 1 completed in `docs/sprints.md`
+- [x] T037 After demo approval: mark Sprint 1 completed in `docs/sprints.md` — demo aprobada por la patrocinadora 2026-10-13
 
 ---
 

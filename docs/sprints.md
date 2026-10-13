@@ -32,7 +32,7 @@ sprint es un subconjunto trazable de ella (historias, FRs y criterios).
 
 ---
 
-## Sprint 1 — Fundamentos y autenticación
+## Sprint 1 — Fundamentos y autenticación ✅ COMPLETADO (demo aprobada 2026-10-13)
 
 **Feature**: `specs/002-foundation-auth/`
 
