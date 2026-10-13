@@ -9,3 +9,7 @@
 -- agrega como NN_nombre_descriptivo.sql y se aplica con:
 --   cd backend && npm run migrate
 -- ============================================================
+-- Nota (Sprint 2): el menú NO requiere migración nueva: las tablas
+-- `platillo` y `menu_dia` ya existen en el esquema baseline
+-- (research.md R1 de specs/003-menu-management).
+-- ============================================================
