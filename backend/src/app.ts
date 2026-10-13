@@ -4,6 +4,7 @@ import { authRoutes } from './routes/auth.routes.js';
 import { usuariosRoutes } from './routes/usuarios.routes.js';
 import { adminMenuRoutes } from './routes/admin-menu.routes.js';
 import { menuRoutes } from './routes/menu.routes.js';
+import { pedidosRoutes } from './routes/pedidos.routes.js';
 
 export function crearApp(): express.Express {
   const app = express();
@@ -20,6 +21,7 @@ export function crearApp(): express.Express {
   app.use('/api/usuarios', usuariosRoutes);
   app.use('/api/admin', adminMenuRoutes);
   app.use('/api/menu', menuRoutes);
+  app.use('/api/pedidos', pedidosRoutes);
 
   app.use(notFound);
   app.use(errorHandler);
