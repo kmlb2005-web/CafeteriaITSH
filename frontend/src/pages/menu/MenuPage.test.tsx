@@ -49,6 +49,7 @@ function renderMenu(): void {
 
 describe('MenuPage (cliente)', () => {
   beforeEach(() => {
+    localStorage.clear()
     vi.unstubAllGlobals()
   })
 
@@ -98,5 +99,28 @@ describe('MenuPage (cliente)', () => {
     await waitFor(() => {
       expect(screen.getByText('Gordita de chicharrón')).toBeInTheDocument()
     })
+  })
+
+  it('agrega platillos al carrito; los no disponibles no se pueden seleccionar (US1.3)', async () => {
+    mockMenu(() =>
+      json({ fecha: '2026-10-27', items: [ITEM_OK, ITEM_NO_DISPONIBLE] }),
+    )
+    renderMenu()
+
+    await screen.findByText('Gordita de chicharrón')
+    // solo el platillo disponible tiene botón de agregar (no seleccionable)
+    expect(
+      screen.getAllByRole('button', { name: 'Agregar al pedido' }),
+    ).toHaveLength(1)
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Agregar al pedido' }),
+    )
+
+    expect(
+      await screen.findByRole('link', { name: /revisar pedido/i }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('1 en tu pedido · $35.00')).toBeInTheDocument()
+    expect(JSON.parse(localStorage.getItem('carrito_v1') ?? '[]')).toHaveLength(1)
   })
 })

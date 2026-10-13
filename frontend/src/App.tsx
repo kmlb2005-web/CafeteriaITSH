@@ -15,6 +15,9 @@ import CajaPage from './pages/caja/CajaPage'
 import CocinaPage from './pages/cocina/CocinaPage'
 import MenuPage from './pages/menu/MenuPage'
 import MisPedidosPage from './pages/pedidos/MisPedidosPage'
+import ConfirmarPedidoPage from './pages/pedidos/ConfirmarPedidoPage'
+import PagoPage from './pages/pedidos/PagoPage'
+import ConfirmacionPage from './pages/pedidos/ConfirmacionPage'
 
 /** Raíz: según la sesión, a la pantalla del rol o al login. */
 function Inicio() {
@@ -80,7 +83,7 @@ export default function App() {
             <Route index element={<CocinaPage />} />
           </Route>
 
-          {/* Cliente: menú (Sprint 2) y seguimiento (Sprint 5) */}
+          {/* Cliente: menú (Sprint 2), pedido+pago (Sprint 3), seguimiento (Sprint 5) */}
           <Route
             element={
               <ProtectedRoute roles={['usuario']}>
@@ -89,6 +92,12 @@ export default function App() {
             }
           >
             <Route path="/menu" element={<MenuPage />} />
+            <Route path="/pedido/confirmar" element={<ConfirmarPedidoPage />} />
+            <Route path="/pedido/:id/pago" element={<PagoPage />} />
+            <Route
+              path="/pedido/:id/confirmacion"
+              element={<ConfirmacionPage />}
+            />
             <Route path="/mis-pedidos" element={<MisPedidosPage />} />
           </Route>
 
