@@ -1,31 +1,36 @@
-import { NavLink, Outlet } from 'react-router'
+import { useState } from 'react'
+import { Outlet } from 'react-router'
+import { AppDrawer, type ItemDrawer } from '../components/AppDrawer'
 import { RoleHeader } from '../components/RoleHeader'
 
-/** Layout del módulo de cocina (esqueleto en Sprint 1; pantalla en Sprint 4). */
+const ITEMS: ItemDrawer[] = [
+  { to: '/cocina', etiqueta: 'Pedidos', icono: 'icon-pedidos' },
+]
+
+/**
+ * Layout de cocina rediseñado (spec 007, FR-001…FR-002): con una sola
+ * vista no hay bottom bar; se reemplaza la nav de tabs por `AppDrawer`
+ * (rail en escritorio, panel deslizante en móvil). El contador de
+ * pedidos y el indicador "act. hace X s" viven en `CocinaPage`, que es
+ * quien conoce el sondeo.
+ */
 export function CocinaLayout() {
+  const [abierto, setAbierto] = useState(false)
+
   return (
-    <div className="min-h-screen">
-      <RoleHeader titulo="Cocina" />
-      <nav className="border-b border-border bg-surface-container-low">
-        <div className="mx-auto flex max-w-5xl gap-1 px-4">
-          <NavLink
-            to="/cocina"
-            end
-            className={({ isActive }) =>
-              `px-3 py-2 text-sm font-semibold ${
-                isActive
-                  ? 'border-b-2 border-primary text-primary'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`
-            }
-          >
-            Pedidos
-          </NavLink>
-        </div>
-      </nav>
-      <main className="mx-auto max-w-5xl px-4 py-6">
-        <Outlet />
-      </main>
+    <div className="flex min-h-screen">
+      <AppDrawer
+        abierto={abierto}
+        onCerrar={() => setAbierto(false)}
+        titulo="Cocina"
+        items={ITEMS}
+      />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <RoleHeader titulo="Cocina" onAbrirMenu={() => setAbierto(true)} />
+        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }

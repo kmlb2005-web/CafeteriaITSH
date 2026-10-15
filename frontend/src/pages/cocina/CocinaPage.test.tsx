@@ -35,18 +35,39 @@ const EN_PREPARACION = {
   partidas: [{ nombre: 'Torta', cantidad: 1 }],
 }
 
+const LISTO = {
+  id: 42,
+  numero: 'PED-261013-CCCC3333',
+  tipo: 'mostrador',
+  estado: 'Listo',
+  cliente_nombre: null,
+  fecha_recoleccion: null,
+  creado_en: '2026-10-13T09:10:00.000Z',
+  orden: 3,
+  partidas: [{ nombre: 'Concha', cantidad: 1 }],
+}
+
 function instalarFetchPedidos(config: {
-  listas: unknown[][]
+  listas?: unknown[][]
   estado?: () => Response
+  /** Nº de GET iniciales que responden con error (para error/conexión). */
+  fallosGet?: number
 }): FetchMock {
   let indice = 0
+  let fallosDados = 0
   const fetchMock: FetchMock = vi.fn(
     async (url: string, init: RequestInit = {}) => {
       const method = init.method ?? 'GET'
       if (url === '/api/cocina/pedidos' && method === 'GET') {
-        const lista =
-          config.listas[Math.min(indice, config.listas.length - 1)] ?? []
-        indice += 1
+        if (fallosDados < (config.fallosGet ?? 0)) {
+          fallosDados += 1
+          return json(
+            { error: { code: 'interno', message: 'El servidor de cocina no responde.' } },
+            500,
+          )
+        }
+        const lista = config.listas?.[indice] ?? config.listas?.[0] ?? []
+        if (config.listas) indice = Math.min(indice + 1, config.listas.length - 1)
         return json({ pedidos: lista })
       }
       if (/^\/api\/cocina\/pedidos\/\d+\/estado$/.test(url) && method === 'POST') {
@@ -74,24 +95,32 @@ describe('CocinaPage (cocinero)', () => {
     vi.unstubAllGlobals()
   })
 
-  it('muestra ambos orígenes ordenados con posición y estado (SC-S4-03)', async () => {
-    instalarFetchPedidos({ listas: [[PAGADO, EN_PREPARACION]] })
+  it('muestra ambos orígenes ordenados con posición, estados y CTA (FR-010)', async () => {
+    instalarFetchPedidos({ listas: [[PAGADO, EN_PREPARACION, LISTO]] })
     render(<CocinaPage />)
 
     expect(await screen.findByText('#1')).toBeInTheDocument()
     expect(screen.getByText('#2')).toBeInTheDocument()
+    expect(screen.getByText('#3')).toBeInTheDocument()
     expect(screen.getByText('PED-261013-AAAA1111')).toBeInTheDocument()
-    expect(screen.getByText('PED-261013-BBBB2222')).toBeInTheDocument()
     expect(screen.getByText(/Anticipado/)).toBeInTheDocument()
-    expect(screen.getByText(/Mostrador · Ana López/)).toBeInTheDocument()
+    expect(screen.getByText(/Ana López/)).toBeInTheDocument()
+    expect(screen.getAllByText(/Mostrador/).length).toBeGreaterThan(0)
 
-    // Cada tarjeta ofrece el paso que le corresponde por estado
+    // CTA por estado: Pagado → iniciar; En preparación → listo; Listo → espera
     expect(
       screen.getByRole('button', { name: 'Iniciar preparación' }),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Marcar listo' }),
     ).toBeInTheDocument()
+    expect(
+      screen.getByText('Listo — en espera de caja'),
+    ).toBeInTheDocument()
+
+    // Recolección enfatizada y badge de estado
+    expect(screen.getByText(/recoge 12:00/)).toBeInTheDocument()
+    expect(screen.getByText('En preparación')).toBeInTheDocument()
   })
 
   it('avanza un pedido con un toque y refresca el tablero (FR-018)', async () => {
@@ -139,5 +168,54 @@ describe('CocinaPage (cocinero)', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       /no puede pasar directamente/,
     )
+  })
+
+  it('marca "¡Retrasado!" cuando la recolección ya pasó (T019)', async () => {
+    instalarFetchPedidos({ listas: [[PAGADO, EN_PREPARACION]] })
+    render(<CocinaPage />)
+
+    expect(await screen.findByText('¡Retrasado!')).toBeInTheDocument()
+    // El pedido sin hora de recolección muestra el tiempo transcurrido
+    expect(screen.getAllByText(/hace \d+/).length).toBeGreaterThan(0)
+  })
+
+  it('muestra el indicador de frescura "act. hace X s" del sondeo (FR-011)', async () => {
+    instalarFetchPedidos({ listas: [[PAGADO]] })
+    render(<CocinaPage />)
+
+    expect(await screen.findByText('#1')).toBeInTheDocument()
+    expect(screen.getByText(/act\. hace \d+ s/)).toBeInTheDocument()
+    expect(screen.getByText('1 pedido')).toBeInTheDocument()
+  })
+
+  it('muestra el estado vacío "¡Todo está al día!" (FR-009)', async () => {
+    instalarFetchPedidos({ listas: [[]] })
+    render(<CocinaPage />)
+
+    expect(await screen.findByText('¡Todo está al día!')).toBeInTheDocument()
+    expect(
+      screen.getByText(/No hay pedidos en cocina/),
+    ).toBeInTheDocument()
+  })
+
+  it('ante 2 fallos seguidos avisa "Sin conexión" y se recupera (FR-012)', async () => {
+    instalarFetchPedidos({ listas: [[PAGADO]], fallosGet: 2 })
+    render(<CocinaPage />)
+
+    expect(await screen.findByText('El servidor de cocina no responde.')).toBeInTheDocument()
+
+    // 1.er reintento fallido → 2 fallos seguidos: indicador sin conexión
+    await userEvent.click(screen.getByRole('button', { name: 'Reintentar' }))
+    expect(
+      await screen.findByText('Sin conexión — reintentando…'),
+    ).toBeInTheDocument()
+
+    // 2.º reintento con éxito: el tablero vuelve y el indicador se recupera
+    await userEvent.click(screen.getByRole('button', { name: 'Reintentar' }))
+    expect(await screen.findByText('#1')).toBeInTheDocument()
+    expect(screen.getByText(/act\. hace \d+ s/)).toBeInTheDocument()
+    expect(
+      screen.queryByText('Sin conexión — reintentando…'),
+    ).not.toBeInTheDocument()
   })
 })

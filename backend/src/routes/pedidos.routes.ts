@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { crear, listar, obtener, pagar } from '../controllers/pedidos.controller.js';
+import {
+  cancelar,
+  crear,
+  listar,
+  obtener,
+  pagar,
+} from '../controllers/pedidos.controller.js';
 import { requireAuth, requireRole } from '../middleware/auth.js';
 import { asyncHandler } from '../utils/http.js';
 
@@ -15,3 +21,4 @@ pedidosRoutes.get('/', asyncHandler(listar));
 pedidosRoutes.post('/', asyncHandler(crear));
 pedidosRoutes.get('/:id', asyncHandler(obtener));
 pedidosRoutes.post('/:id/pago', asyncHandler(pagar));
+pedidosRoutes.post('/:id/cancelar', asyncHandler(cancelar));

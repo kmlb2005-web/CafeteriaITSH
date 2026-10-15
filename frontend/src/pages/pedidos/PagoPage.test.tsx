@@ -32,6 +32,7 @@ function renderPagina(): void {
           path="/pedido/:id/confirmacion"
           element={<div>pantalla-de-confirmacion</div>}
         />
+        <Route path="/mis-pedidos" element={<div>pantalla-de-mis-pedidos</div>} />
       </Routes>
     </MemoryRouter>,
   )
@@ -42,13 +43,16 @@ describe('PagoPage', () => {
     vi.unstubAllGlobals()
   })
 
-  it('muestra el folio y el total del pedido', async () => {
+  it('muestra el folio, el total y el aviso de no capturar tarjeta', async () => {
     const fetchMock: FetchMock = vi.fn(async () => json(PEDIDO))
     vi.stubGlobal('fetch', fetchMock)
     renderPagina()
 
     expect(await screen.findByText('PED-261111-AABBCCDD')).toBeInTheDocument()
     expect(screen.getByText('$90.00')).toBeInTheDocument()
+    expect(
+      screen.getByText(/no captura datos de tarjeta/i),
+    ).toBeInTheDocument()
   })
 
   it('al pagar con éxito navega a la confirmación', async () => {
@@ -75,7 +79,7 @@ describe('PagoPage', () => {
     expect(await screen.findByText('pantalla-de-confirmacion')).toBeInTheDocument()
   })
 
-  it('muestra el mensaje claro del rechazo y permite reintentar (US1.5)', async () => {
+  it('tras un rechazo ofrece reintentar o cancelar el pedido (US1.5)', async () => {
     const fetchMock: FetchMock = vi.fn(async (input, init) => {
       if ((init?.method ?? 'GET').toUpperCase() === 'POST') {
         return json(
@@ -95,13 +99,59 @@ describe('PagoPage', () => {
     renderPagina()
 
     await screen.findByText('PED-261111-AABBCCDD')
-    await userEvent.click(screen.getByRole('button', { name: /pagar/i }))
+    await userEvent.click(screen.getByRole('button', { name: 'Pagar ahora' }))
 
     expect(
       await screen.findByText(/no pudo confirmarse/i),
     ).toBeInTheDocument()
-    // permanece en la página con el botón habilitado para reintentar
-    expect(screen.getByRole('button', { name: /pagar/i })).toBeEnabled()
+    // el rechazo reemplaza el CTA por el par reintentar/cancelar
+    expect(
+      screen.queryByRole('button', { name: 'Pagar ahora' }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Reintentar pago' }),
+    ).toBeEnabled()
+    expect(
+      screen.getByRole('button', { name: 'Cancelar pedido' }),
+    ).toBeEnabled()
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2))
+  })
+
+  it('cancelar tras el rechazo navega a Mis pedidos (spec 007 US3.5)', async () => {
+    const fetchMock: FetchMock = vi.fn(async (input, init) => {
+      const method = (init?.method ?? 'GET').toUpperCase()
+      if (method === 'POST' && String(input).endsWith('/pago')) {
+        return json(
+          {
+            error: {
+              code: 'pago_rechazado',
+              message: 'El pago no pudo confirmarse. Tu pedido sigue pendiente.',
+            },
+          },
+          402,
+        )
+      }
+      if (method === 'POST' && String(input).endsWith('/cancelar')) {
+        return json({ pedido: { ...PEDIDO, estado: 'Cancelado' } })
+      }
+      return json(PEDIDO)
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    renderPagina()
+
+    await screen.findByText('PED-261111-AABBCCDD')
+    await userEvent.click(screen.getByRole('button', { name: 'Pagar ahora' }))
+    await screen.findByText(/no pudo confirmarse/i)
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Cancelar pedido' }),
+    )
+
+    expect(
+      await screen.findByText('pantalla-de-mis-pedidos'),
+    ).toBeInTheDocument()
+    expect(
+      fetchMock.mock.calls.some(([p]) => String(p).endsWith('/cancelar')),
+    ).toBe(true)
   })
 })

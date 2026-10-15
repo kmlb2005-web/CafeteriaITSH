@@ -1,6 +1,5 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { ApiError, api } from '../../lib/api'
 import { Button } from '../../components/ui/button'
 import {
   Card,
@@ -11,8 +10,8 @@ import {
 } from '../../components/ui/card'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
+import { ApiError, api } from '../../lib/api'
 import {
-  actualizarCantidad,
   leerCarrito,
   quitarDelCarrito,
   totalCarrito,
@@ -28,14 +27,38 @@ function formatearLocal(d: Date): string {
   )}:${pad(d.getMinutes())}`
 }
 
+function formatearHora(d: Date): string {
+  return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
+}
+
 function formatearPrecio(precio: number): string {
   return `$${precio.toFixed(2)}`
 }
 
+function flechaRegresar(): ReactNode {
+  return (
+    <svg
+      className="h-6 w-6"
+      aria-hidden="true"
+      focusable="false"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M15 5.5 8.5 12l6.5 6.5" />
+    </svg>
+  )
+}
+
 /**
- * Revisión del pedido antes de confirmarlo (FR-010): partidas con sus
- * cantidades, total visible y hora de recolección con la regla de los
- * 10 minutos validada también en cliente (FR-011, FR-021).
+ * Revisión del pedido antes de confirmarlo (FR-014, design §3.3): partidas
+ * con quitar, total grande, hora de recolección con la regla de los 10
+ * minutos validada también en cliente —el mensaje incluye la hora mínima
+ * posible— y CTA **Continuar al pago**. Carrito vacío → vuelta al menú
+ * (SC-006).
  */
 export default function ConfirmarPedidoPage() {
   const navigate = useNavigate()
@@ -60,9 +83,9 @@ export default function ConfirmarPedidoPage() {
         <CardContent>
           <Link
             to="/menu"
-            className="font-semibold text-primary hover:underline"
+            className="inline-flex min-h-12 items-center justify-center rounded-md bg-primary px-4 py-3 font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Ver el menú del día
+            Volver al menú
           </Link>
         </CardContent>
       </Card>
@@ -79,8 +102,13 @@ export default function ConfirmarPedidoPage() {
       return
     }
     if (recogida.getTime() < Date.now() + 10 * 60 * 1000) {
+      // La hora mínima real la calcula el servidor (FR-011); en cliente
+      // ofrecemos la misma regla con la hora posible más temprana.
       setError(
-        'El pedido debe hacerse con al menos 10 minutos de anticipación. Elige una hora de recolección más alejada.',
+        `El pedido debe hacerse con al menos 10 minutos de anticipación. ` +
+          `La hora más temprana para recoger es ${formatearHora(
+            new Date(Date.now() + 10 * 60 * 1000),
+          )}.`,
       )
       return
     }
@@ -111,110 +139,114 @@ export default function ConfirmarPedidoPage() {
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
-      <Card>
-        <CardHeader>
-          <CardTitle>Revisa tu pedido</CardTitle>
-          <CardDescription>
-            El total se calcula con los precios vigentes del menú.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-3">
-          <ul className="grid gap-2">
-            {lineas.map((l) => (
-              <li
-                key={l.menu_dia_id}
-                className="flex flex-wrap items-center gap-3 rounded-md border border-border bg-surface-container-low px-3 py-2"
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold">{l.nombre}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatearPrecio(l.precio)} c/u
-                  </p>
-                </div>
-                <label
-                  className="text-xs text-muted-foreground"
-                  htmlFor={`cantidad-${l.menu_dia_id}`}
+    <div className="grid gap-4">
+      <div className="flex items-center gap-3">
+        <Link
+          to="/menu"
+          aria-label="Volver al menú"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-muted"
+        >
+          {flechaRegresar()}
+        </Link>
+        <div className="min-w-0">
+          <h1 className="font-heading text-2xl font-bold">
+            Revisa tu pedido
+          </h1>
+          <p className="text-xs text-muted-foreground">
+            Recogida presencial en la cafetería
+          </p>
+        </div>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <Card>
+          <CardHeader>
+            <CardTitle>Resumen</CardTitle>
+            <CardDescription>
+              El total se calcula con los precios vigentes del menú.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ul className="grid gap-2">
+              {lineas.map((l) => (
+                <li
+                  key={l.menu_dia_id}
+                  className="flex min-h-14 flex-wrap items-center gap-3 rounded-md border border-border bg-surface-container-low px-3 py-2"
                 >
-                  Cantidad
-                </label>
-                <Input
-                  id={`cantidad-${l.menu_dia_id}`}
-                  aria-label={`Cantidad de ${l.nombre}`}
-                  type="number"
-                  min={1}
-                  max={99}
-                  className="h-9 w-16"
-                  value={l.cantidad}
-                  onChange={(e) =>
-                    setLineas(
-                      actualizarCantidad(
-                        l.menu_dia_id,
-                        Number(e.target.value) || 1,
-                      ),
-                    )
-                  }
-                />
-                <span className="w-16 text-right text-sm font-semibold">
-                  {formatearPrecio(l.precio * l.cantidad)}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold">
+                      <span className="text-lg font-extrabold">
+                        {l.cantidad}×
+                      </span>{' '}
+                      {l.nombre}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatearPrecio(l.precio * l.cantidad)}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    size="touch"
+                    variant="outline"
+                    aria-label={`Quitar ${l.nombre}`}
+                    onClick={() => setLineas(quitarDelCarrito(l.menu_dia_id))}
+                  >
+                    ×
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Confirmar</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form
+              onSubmit={(e) => void confirmar(e)}
+              noValidate
+              className="grid gap-4"
+            >
+              <p className="flex items-baseline justify-between">
+                <span className="text-sm text-muted-foreground">Total</span>
+                <span className="font-heading text-3xl font-extrabold text-primary">
+                  {formatearPrecio(total)}
                 </span>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setLineas(quitarDelCarrito(l.menu_dia_id))}
-                >
-                  Quitar
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Confirmar</CardTitle>
-          <CardDescription>Recogida presencial en la cafetería.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            onSubmit={(e) => void confirmar(e)}
-            noValidate
-            className="grid gap-4"
-          >
-            <p className="flex items-baseline justify-between">
-              <span className="text-sm text-muted-foreground">Total</span>
-              <span className="font-heading text-xl font-bold text-primary">
-                {formatearPrecio(total)}
-              </span>
-            </p>
-
-            <div className="grid gap-2">
-              <Label htmlFor="hora">Hora de recolección</Label>
-              <Input
-                id="hora"
-                type="datetime-local"
-                value={hora}
-                onChange={(e) => setHora(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">
-                Mínimo 10 minutos de anticipación.
               </p>
-            </div>
 
-            {error && (
-              <p role="alert" className="text-sm font-medium text-destructive">
-                {error}
-              </p>
-            )}
+              <div className="grid gap-2">
+                <Label htmlFor="hora">Hora de recolección</Label>
+                <Input
+                  id="hora"
+                  type="datetime-local"
+                  value={hora}
+                  onChange={(e) => setHora(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Mínimo 10 minutos de anticipación.
+                </p>
+              </div>
 
-            <Button type="submit" disabled={enviando}>
-              {enviando ? 'Confirmando…' : 'Confirmar pedido'}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+              {error && (
+                <p role="alert" className="text-sm font-medium text-destructive">
+                  {error}
+                </p>
+              )}
+
+              <Button
+                type="submit"
+                size="touch"
+                className="min-h-12"
+                disabled={enviando}
+              >
+                {enviando ? 'Confirmando…' : 'Continuar al pago'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

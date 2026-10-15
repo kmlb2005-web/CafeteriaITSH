@@ -1,38 +1,46 @@
-import { NavLink, Outlet } from 'react-router'
+import { useEffect, useState } from 'react'
+import { Outlet, useLocation } from 'react-router'
+import { AppDrawer, type ItemDrawer } from '../components/AppDrawer'
 import { RoleHeader } from '../components/RoleHeader'
 
-/** Layout del módulo de administración (US2, Sprint 1 + menú, Sprint 2). */
-const navClass = ({ isActive }: { isActive: boolean }): string =>
-  `px-3 py-2 text-sm font-semibold ${
-    isActive
-      ? 'border-b-2 border-primary text-primary'
-      : 'text-muted-foreground hover:text-foreground'
-  }`
+const ITEMS: ItemDrawer[] = [
+  { to: '/admin', etiqueta: 'Inicio', icono: 'icon-inicio' },
+  { to: '/admin/usuarios', etiqueta: 'Usuarios', icono: 'icon-usuarios' },
+  { to: '/admin/platillos', etiqueta: 'Platillos', icono: 'icon-platillos' },
+  { to: '/admin/menu', etiqueta: 'Menú del día', icono: 'icon-menu' },
+]
 
+/**
+ * Layout de administración rediseñado (spec 007, FR-001…FR-003): reemplaza
+ * la nav de tabs por `AppDrawer` con sus 4 secciones; el cierre de sesión
+ * vive en el pie del drawer. El admin no usa bottom bar (T032).
+ */
 export function AdminLayout() {
+  const [abierto, setAbierto] = useState(false)
+  const { pathname } = useLocation()
+
+  // Al navegar de sección se cierra el panel deslizante (M7).
+  useEffect(() => {
+    setAbierto(false)
+  }, [pathname])
+
   return (
-    <div className="min-h-screen">
-      <RoleHeader titulo="Administración" />
-      <nav className="border-b border-border bg-surface-container-low">
-        <div className="mx-auto flex max-w-5xl gap-1 px-4">
-          <NavLink
-            to="/admin"
-            end
-            className={navClass}
-          >
-            Usuarios
-          </NavLink>
-          <NavLink to="/admin/platillos" className={navClass}>
-            Platillos
-          </NavLink>
-          <NavLink to="/admin/menu" className={navClass}>
-            Menú del día
-          </NavLink>
-        </div>
-      </nav>
-      <main className="mx-auto max-w-5xl px-4 py-6">
-        <Outlet />
-      </main>
+    <div className="flex min-h-screen">
+      <AppDrawer
+        abierto={abierto}
+        onCerrar={() => setAbierto(false)}
+        titulo="Administración"
+        items={ITEMS}
+      />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <RoleHeader
+          titulo="Administración"
+          onAbrirMenu={() => setAbierto(true)}
+        />
+        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }

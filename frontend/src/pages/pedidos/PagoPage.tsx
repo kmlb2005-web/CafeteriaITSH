@@ -24,9 +24,11 @@ function formatearPrecio(precio: number): string {
 }
 
 /**
- * Paso de pago del pedido (FR-012): sin datos de tarjeta — el adaptador
- * del proveedor es simulado y solo devuelve una referencia (SC-S3-04).
- * Un rechazo deja el pedido `Pendiente` y permite reintentar (US1.5).
+ * Paso de pago del pedido (FR-012, design §3.4): sin datos de tarjeta —
+ * el adaptador del proveedor es simulado y solo devuelve una referencia
+ * (SC-S3-04). Un rechazo deja el pedido `Pendiente` y ofrece **Reintentar
+ * pago** o **Cancelar pedido** (cancelación propia vía
+ * `POST /api/pedidos/:id/cancelar`, decisión 2026-10-14).
  */
 export default function PagoPage() {
   const { id } = useParams<{ id: string }>()
@@ -37,6 +39,7 @@ export default function PagoPage() {
   const [error, setError] = useState<string | null>(null)
   const [simularRechazo, setSimularRechazo] = useState(false)
   const [pagando, setPagando] = useState(false)
+  const [cancelando, setCancelando] = useState(false)
   const [intento, setIntento] = useState(0)
 
   const cargar = useCallback(async () => {
@@ -69,6 +72,8 @@ export default function PagoPage() {
       })
       navigate(`/pedido/${id}/confirmacion`)
     } catch (err) {
+      // Rechazo (402): el pedido queda Pendiente y se ofrece reintentar o
+      // cancelar sin perder el folio (SC-S3-03).
       setError(
         err instanceof ApiError
           ? err.message
@@ -76,6 +81,23 @@ export default function PagoPage() {
       )
     } finally {
       setPagando(false)
+    }
+  }
+
+  async function cancelarPedido(): Promise<void> {
+    setError(null)
+    setCancelando(true)
+    try {
+      await api(`/api/pedidos/${id}/cancelar`, { method: 'POST' })
+      navigate('/mis-pedidos')
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : 'No se pudo cancelar el pedido.',
+      )
+    } finally {
+      setCancelando(false)
     }
   }
 
@@ -110,7 +132,8 @@ export default function PagoPage() {
         <CardHeader>
           <CardTitle>Este pedido ya está pagado</CardTitle>
           <CardDescription>
-            Folio {pedido.numero} · estado Pagado.
+            Folio <span className="font-mono font-semibold">{pedido.numero}</span>{' '}
+            · estado Pagado.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -125,8 +148,30 @@ export default function PagoPage() {
     )
   }
 
+  if (pedido.estado === 'Cancelado') {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Pedido cancelado</CardTitle>
+          <CardDescription>
+            Folio <span className="font-mono font-semibold">{pedido.numero}</span>{' '}
+            · estado Cancelado. Ya no requiere pago.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link
+            to="/mis-pedidos"
+            className="font-semibold text-primary hover:underline"
+          >
+            Ver mis pedidos
+          </Link>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
-    <div className="mx-auto max-w-md">
+    <div className="mx-auto grid max-w-md gap-4">
       <Card>
         <CardHeader>
           <CardTitle>Pagar pedido</CardTitle>
@@ -137,14 +182,14 @@ export default function PagoPage() {
         <CardContent className="grid gap-4">
           <p className="flex items-baseline justify-between">
             <span className="text-sm text-muted-foreground">Total a pagar</span>
-            <span className="font-heading text-xl font-bold text-primary">
+            <span className="font-heading text-3xl font-extrabold text-primary">
               {formatearPrecio(pedido.total)}
             </span>
           </p>
 
           <p className="rounded-md bg-surface-container-low px-3 py-2 text-xs text-muted-foreground">
-            Pago en línea simulado (demo): no se solicita ni se almacena
-            información de tarjetas.
+            Este proceso no captura datos de tarjeta: el pago es simulado
+            (demo) y solo devuelve una referencia.
           </p>
 
           <label className="flex items-center gap-2 text-sm">
@@ -157,14 +202,78 @@ export default function PagoPage() {
           </label>
 
           {error && (
-            <p role="alert" className="text-sm font-medium text-destructive">
-              {error}
-            </p>
+            <div
+              role="alert"
+              className="grid gap-3 rounded-md border border-destructive/40 bg-surface-container-low p-3"
+            >
+              <p className="text-sm font-medium text-destructive">{error}</p>
+              <p className="text-sm text-muted-foreground">
+                Tu pedido{' '}
+                <span className="font-mono font-semibold">{pedido.numero}</span>{' '}
+                sigue Pendiente: puedes reintentar el pago o cancelarlo.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size="touch"
+                  className="min-h-12"
+                  disabled={pagando || cancelando}
+                  onClick={() => void pagar()}
+                >
+                  {pagando ? 'Procesando…' : 'Reintentar pago'}
+                </Button>
+                <Button
+                  type="button"
+                  size="touch"
+                  variant="outline"
+                  className="min-h-12"
+                  disabled={pagando || cancelando}
+                  onClick={() => void cancelarPedido()}
+                >
+                  Cancelar pedido
+                </Button>
+              </div>
+            </div>
           )}
 
-          <Button type="button" disabled={pagando} onClick={() => void pagar()}>
-            {pagando ? 'Procesando…' : 'Pagar ahora'}
-          </Button>
+          {!error && (
+            <Button
+              type="button"
+              size="touch"
+              className="min-h-12"
+              disabled={pagando}
+              onClick={() => void pagar()}
+            >
+              {pagando ? (
+                <span role="status" className="inline-flex items-center gap-2">
+                  <svg
+                    className="h-4 w-4 animate-spin"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z"
+                    />
+                  </svg>
+                  Procesando tu pago…
+                </span>
+              ) : (
+                'Pagar ahora'
+              )}
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>

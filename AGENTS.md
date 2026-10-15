@@ -9,7 +9,8 @@ App única con rutas por rol (`/admin`, `/caja`, `/cocina`, `/menu`, `/mis-pedid
   `backend/` (Express + TS + MySQL) y `frontend/` (React + Vite + Tailwind v4).
   Todos los comandos npm se ejecutan **dentro de la carpeta correspondiente**.
 - `migrations/` — SQL nuevo de esquema (vacío a propósito; ver Migraciones).
-- `specs/00N-*/` — specs por sprint (speckit). `docs/` — reglas, diseño, SQL baseline.
+- `specs/00N-*/` — specs por sprint (speckit). `docs/` — reglas, SQL baseline.
+  `design/` — documentos de diseño UI/UX por rol (operativo, cocina, cliente).
 - Código, comentarios, mensajes al usuario y docs están **en español**; mantener ese idioma.
 
 ## Comandos (por paquete)

@@ -5,7 +5,6 @@ import { Button } from '../../components/ui/button'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '../../components/ui/card'
@@ -24,6 +23,7 @@ interface Pedido {
   numero: string
   estado: string
   total: number
+  cliente_nombre: string | null
   fecha_recoleccion: string | null
   partidas: Partida[]
 }
@@ -112,9 +112,10 @@ export default function ConfirmacionPage() {
               {pedido.estado}
             </span>
           </div>
-          <CardDescription>
-            Folio <span className="font-mono font-semibold">{pedido.numero}</span>
-          </CardDescription>
+          <div>
+            <p className="text-xs text-muted-foreground">Folio</p>
+            <p className="font-mono text-2xl font-bold">{pedido.numero}</p>
+          </div>
         </CardHeader>
         <CardContent className="grid gap-4">
           <p className="text-sm text-muted-foreground">
@@ -124,6 +125,10 @@ export default function ConfirmacionPage() {
           </p>
 
           <dl className="grid grid-cols-2 gap-2 text-sm">
+            <dt className="text-muted-foreground">Cliente</dt>
+            <dd className="font-semibold">
+              {pedido.cliente_nombre ?? 'Sin nombre'}
+            </dd>
             <dt className="text-muted-foreground">Hora de recolección</dt>
             <dd className="font-semibold">
               {pedido.fecha_recoleccion ?? '—'}
@@ -151,13 +156,13 @@ export default function ConfirmacionPage() {
             ))}
           </ul>
 
-          <div className="flex justify-end">
+          <div className="flex flex-wrap justify-end gap-2">
             {pagado ? (
               <Link
-                to="/menu"
+                to="/mis-pedidos"
                 className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
               >
-                Volver al menú
+                Ver mis pedidos
               </Link>
             ) : (
               <Link
@@ -167,6 +172,12 @@ export default function ConfirmacionPage() {
                 Pagar ahora
               </Link>
             )}
+            <Link
+              to="/menu"
+              className="rounded-md border border-border bg-surface-container-low px-4 py-2 text-sm font-semibold hover:bg-muted"
+            >
+              Volver al menú
+            </Link>
           </div>
         </CardContent>
       </Card>

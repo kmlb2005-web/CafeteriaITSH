@@ -21,4 +21,44 @@
   <symbol id="x-icon" viewBox="0 0 19 19">
     <path fill="#08060d" fill-rule="evenodd" d="M1.893 1.98c.052.072 1.245 1.769 2.653 3.77l2.892 4.114c.183.261.333.48.333.486s-.068.089-.152.183l-.522.593-.765.867-3.597 4.087c-.375.426-.734.834-.798.905a1 1 0 0 0-.118.148c0 .01.236.017.664.017h.663l.729-.83c.4-.457.796-.906.879-.999a692 692 0 0 0 1.794-2.038c.034-.037.301-.34.594-.675l.551-.624.345-.392a7 7 0 0 1 .34-.374c.006 0 .93 1.306 2.052 2.903l2.084 2.965.045.063h2.275c1.87 0 2.273-.003 2.266-.021-.008-.02-1.098-1.572-3.894-5.547-2.013-2.862-2.28-3.246-2.273-3.266.008-.019.282-.332 2.085-2.38l2-2.274 1.567-1.782c.022-.028-.016-.03-.65-.03h-.674l-.3.342a871 871 0 0 1-1.782 2.025c-.067.075-.405.458-.75.852a100 100 0 0 1-.803.91c-.148.172-.299.344-.99 1.127-.304.343-.32.358-.345.327-.015-.019-.904-1.282-1.976-2.808L6.365 1.85H1.8zm1.782.91 8.078 11.294c.772 1.08 1.413 1.973 1.425 1.984.016.017.241.02 1.05.017l1.03-.004-2.694-3.766L7.796 5.75 5.722 2.852l-1.039-.004-1.039-.004z" clip-rule="evenodd"/>
   </symbol>
+
+  <!-- Iconos lineales de la app (spec 007-ui-redesign): heredan color por currentColor -->
+  <symbol id="icon-inicio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/>
+  </symbol>
+  <symbol id="icon-caja" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3.5 5h2l2.3 9.8a1.5 1.5 0 0 0 1.45 1.15h7.9a1.5 1.5 0 0 0 1.45-1.1L20.5 8H6"/>
+    <circle cx="10" cy="19.5" r="1.25"/><circle cx="17" cy="19.5" r="1.25"/>
+  </symbol>
+  <symbol id="icon-entregas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="8.25"/><path d="m8.5 12.3 2.4 2.4 4.6-5"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.5 8.5h11v5a4.5 4.5 0 0 1-4.5 4.5h-2a4.5 4.5 0 0 1-4.5-4.5z"/>
+    <path d="M16.5 9.5h1.75a2.25 2.25 0 0 1 0 4.5H16.5M8.5 5.5c0-1 .75-1.5.75-2.5M12 5.5c0-1 .75-1.5.75-2.5"/>
+  </symbol>
+  <symbol id="icon-pedidos" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="4.5" width="14" height="16" rx="2"/>
+    <path d="M9 3.75h6V6H9zM8.5 10h7M8.5 14h5"/>
+  </symbol>
+  <symbol id="icon-usuarios" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="9" cy="8.5" r="3.25"/>
+    <path d="M3.5 19.5c0-3 2.5-5 5.5-5s5.5 2 5.5 5M15.5 5.6a3.25 3.25 0 0 1 0 5.8M17.5 14.9c1.8.6 3 2.2 3 4.6"/>
+  </symbol>
+  <symbol id="icon-platillos" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 4v6.5a2 2 0 0 0 4 0V4M7 4v16M12 4v16M19 4c-1.5 1.5-2 3.5-2 6.5 0 2 .7 3 2 3.5v6"/>
+  </symbol>
+  <symbol id="icon-bebidas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.5 7h11l-1 12a1.5 1.5 0 0 1-1.5 1.35h-6A1.5 1.5 0 0 1 7.5 19zM8 4.5h8M9.5 2.5h5"/>
+  </symbol>
+  <symbol id="icon-comida" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 4v6.5a2 2 0 0 0 4 0V4M7 4v16M19 4c-1.5 1.5-2 3.5-2 6.5 0 2 .7 3 2 3.5v6"/>
+  </symbol>
+  <symbol id="icon-snacks" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3.75c4.55 0 8.25 3.7 8.25 8.25S16.55 20.25 12 20.25 3.75 16.55 3.75 12 7.45 3.75 12 3.75z"/>
+    <path d="M9.5 9.5h.01M14.5 8.5h.01M12.5 13.5h.01M9.5 14.5h.01"/>
+  </symbol>
+  <symbol id="icon-postres" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.5 20.25h15v-6l-7.5-5-7.5 5zM12 9.25v-2M12 4.5h.01M9 20.25v-3.5h6v3.5"/>
+  </symbol>
 </svg>

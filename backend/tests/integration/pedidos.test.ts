@@ -332,6 +332,71 @@ describe('POST /api/pedidos/:id/pago — cobro (US1, FR-012/FR-013)', () => {
   });
 });
 
+describe('POST /api/pedidos/:id/cancelar — cancelación propia (spec 007 US3.5)', () => {
+  it('cancela el propio pedido Pendiente y queda Cancelado (200)', async () => {
+    const creacion = await crearPedido(cookieCliente);
+    expect(creacion.status).toBe(201);
+    const id = creacion.body.id as number;
+
+    const res = await request(app)
+      .post(`/api/pedidos/${id}/cancelar`)
+      .set('Cookie', cookieCliente)
+      .send({});
+
+    expect(res.status).toBe(200);
+    expect(res.body.pedido).toMatchObject({ id, estado: 'Cancelado' });
+
+    // la consulta lo refleja y la cancelación no se puede repetir
+    const consulta = await request(app)
+      .get(`/api/pedidos/${id}`)
+      .set('Cookie', cookieCliente);
+    expect(consulta.body.estado).toBe('Cancelado');
+
+    const otra = await request(app)
+      .post(`/api/pedidos/${id}/cancelar`)
+      .set('Cookie', cookieCliente)
+      .send({});
+    expect(otra.status).toBe(409);
+    expect(otra.body.error.code).toBe('no_cancelable');
+  });
+
+  it('no cancela un pedido Pagado: caja gestiona esa cancelación (409)', async () => {
+    const res = await request(app)
+      .post(`/api/pedidos/${idPedido}/cancelar`)
+      .set('Cookie', cookieCliente)
+      .send({});
+
+    expect(res.status).toBe(409);
+    expect(res.body.error.code).toBe('no_cancelable');
+    expect(res.body.error.message).toMatch(/Pagado/);
+  });
+
+  it('un pedido ajeno responde 404 sin revelar existencia', async () => {
+    const creacion = await crearPedido(cookieCliente);
+    expect(creacion.status).toBe(201);
+    const id = creacion.body.id as number;
+
+    const res = await request(app)
+      .post(`/api/pedidos/${id}/cancelar`)
+      .set('Cookie', cookieCliente2)
+      .send({});
+
+    expect(res.status).toBe(404);
+    expect(res.body.error.code).toBe('no_encontrado');
+
+    // sigue intacto para su dueño
+    const consulta = await request(app)
+      .get(`/api/pedidos/${id}`)
+      .set('Cookie', cookieCliente);
+    expect(consulta.body.estado).toBe('Pendiente');
+  });
+
+  it('sin sesión no hay cancelación (401)', async () => {
+    const res = await request(app).post(`/api/pedidos/${idPedido}/cancelar`).send({});
+    expect(res.status).toBe(401);
+  });
+});
+
 describe('Autorización y aislamiento (US1.5, US2.2)', () => {
   it('otro cliente no puede consultar el pedido (404)', async () => {
     const res = await request(app)

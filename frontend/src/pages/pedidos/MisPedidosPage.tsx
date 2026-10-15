@@ -160,22 +160,39 @@ export default function MisPedidosPage() {
             to="/menu"
             className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
           >
-            Ver el menú de hoy
+            Nuevo pedido
           </Link>
         </CardContent>
       </Card>
     )
   }
 
+  const activos = pedidos.filter(
+    (p) => p.estado !== 'Entregado' && p.estado !== 'Cancelado',
+  ).length
+
   return (
     <div className="mx-auto grid max-w-2xl gap-3">
-      <h1 className="font-heading text-xl font-bold">Mis pedidos</h1>
+      <header className="flex flex-wrap items-center gap-3">
+        <h1 className="min-w-0 flex-1 font-heading text-xl font-bold">
+          Mis pedidos
+        </h1>
+        <span
+          aria-label={`${activos} pedidos activos`}
+          className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground"
+        >
+          {activos} {activos === 1 ? 'activo' : 'activos'}
+        </span>
+      </header>
 
       {pedidos.map((p) => {
         const detalle = detalles[p.id]
         const expandido = abierto === p.id
         return (
-          <Card key={p.id} className={p.aviso_listo ? 'border-status-ready' : ''}>
+          <Card
+            key={p.id}
+            className={p.aviso_listo ? 'border-status-ready shadow-sm' : ''}
+          >
             <CardHeader className="pb-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-mono text-sm font-semibold">{p.numero}</span>

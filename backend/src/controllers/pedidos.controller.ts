@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { ApiError } from '../middleware/error.js';
 import {
+  cancelarPedidoPropio,
   crearPedidoAnticipado,
   listarMisPedidos,
   obtenerPedido,
@@ -69,6 +70,19 @@ export async function pagar(req: Request, res: Response): Promise<void> {
 export async function obtener(req: Request, res: Response): Promise<void> {
   const id = esquemaId.parse(req.params['id']);
   res.json(await obtenerPedido(id, usuarioActual(req)));
+}
+
+/**
+ * Cancelación del propio pedido (spec 007 US3.5): solo el dueño y solo
+ * mientras esté `Pendiente` (pago rechazado o sin pagar).
+ */
+export async function cancelar(req: Request, res: Response): Promise<void> {
+  const id = esquemaId.parse(req.params['id']);
+  const pedido = await cancelarPedidoPropio({
+    pedidoId: id,
+    usuarioId: usuarioActual(req),
+  });
+  res.json({ pedido });
 }
 
 /**

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router'
 import CajaPage from './CajaPage'
 
 type FetchMock = ReturnType<typeof vi.fn>
@@ -18,6 +19,17 @@ const ITEM = {
   categoria: 'Comida',
   descripcion: null,
   precio: 35,
+  disponible: true,
+  especial: false,
+}
+
+const ITEM_BEBIDA = {
+  id: 12,
+  platillo_id: 2,
+  nombre: 'Agua de horchata',
+  categoria: 'Bebidas',
+  descripcion: null,
+  precio: 25,
   disponible: true,
   especial: false,
 }
@@ -48,12 +60,8 @@ const RUTAS_BASE = [
   {
     method: 'GET',
     url: '/api/menu',
-    respuesta: () => json({ fecha: '2026-10-13', items: [ITEM] }),
-  },
-  {
-    method: 'GET',
-    url: '/api/caja/pedidos/listos',
-    respuesta: () => json({ pedidos: [] }),
+    respuesta: () =>
+      json({ fecha: '2026-10-13', items: [ITEM, ITEM_BEBIDA] }),
   },
 ]
 
@@ -74,6 +82,14 @@ function instalarFetch(rutas: Ruta[]): FetchMock {
   )
   vi.stubGlobal('fetch', fetchMock)
   return fetchMock
+}
+
+function renderPagina(): void {
+  render(
+    <MemoryRouter initialEntries={['/caja/nuevo']}>
+      <CajaPage />
+    </MemoryRouter>,
+  )
 }
 
 function cuerpoEnviado(
@@ -102,7 +118,7 @@ describe('CajaPage (cajero)', () => {
     vi.unstubAllGlobals()
   })
 
-  it('cobra un pedido en un solo paso: Registrar y cobrar (SC-S4-01)', async () => {
+  it('cobra en un paso: Ver cobro → Registrar y cobrar (SC-S4-01)', async () => {
     const fetchMock = instalarFetch([
       ...RUTAS_BASE,
       { method: 'POST', url: '/api/caja/pedidos', respuesta: () => json(PEDIDO_PENDIENTE, 201) },
@@ -116,7 +132,7 @@ describe('CajaPage (cajero)', () => {
           }),
       },
     ])
-    render(<CajaPage />)
+    renderPagina()
 
     await screen.findByText('Gordita de chicharrón')
     const agregar = screen.getByRole('button', {
@@ -128,11 +144,26 @@ describe('CajaPage (cajero)', () => {
       screen.getByLabelText('Nombre del cliente (opcional)'),
       'Ana López',
     )
-    await userEvent.click(screen.getByRole('button', { name: 'Registrar y cobrar' }))
+
+    // La CheckoutBar muestra conteo y total, y abre el resumen
+    expect(screen.getByText('2 platillos')).toBeInTheDocument()
+    expect(screen.getAllByText('$70.00').length).toBeGreaterThan(0)
+    await userEvent.click(screen.getByRole('button', { name: 'Ver cobro' }))
+
+    // Resumen con desglose
+    expect(screen.getByText('2× Gordita de chicharrón')).toBeInTheDocument()
+    expect(
+      screen.getByText('El pedido se registra y cobra en un solo paso.'),
+    ).toBeInTheDocument()
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Registrar y cobrar' }),
+    )
 
     // Resultado con folio y estado cobrado
     expect((await screen.findAllByText(/PED-261013-ABCDEF12/)).length).toBeGreaterThan(0)
     expect(screen.getByText(/Cobro confirmado/)).toBeInTheDocument()
+    expect(screen.getByText('Pagado')).toBeInTheDocument()
 
     // La captura envía nombre e items con cantidad al servidor
     expect(cuerpoEnviado(fetchMock, '/api/caja/pedidos', 'POST')).toMatchObject({
@@ -143,7 +174,7 @@ describe('CajaPage (cajero)', () => {
 
   it('sin platillos seleccionados muestra error local sin llamar a la API', async () => {
     const fetchMock = instalarFetch([...RUTAS_BASE])
-    render(<CajaPage />)
+    renderPagina()
 
     await screen.findByText('Gordita de chicharrón')
     await userEvent.click(
@@ -173,12 +204,13 @@ describe('CajaPage (cajero)', () => {
               ),
       },
     ])
-    render(<CajaPage />)
+    renderPagina()
 
     await screen.findByText('Gordita de chicharrón')
     await userEvent.click(
       screen.getByRole('button', { name: 'Agregar uno de Gordita de chicharrón' }),
     )
+    await userEvent.click(screen.getByRole('button', { name: 'Ver cobro' }))
     await userEvent.click(
       screen.getByRole('button', { name: 'Registrar y cobrar' }),
     )
@@ -192,5 +224,72 @@ describe('CajaPage (cajero)', () => {
 
     // Un solo POST de captura: el reintento no duplica el pedido
     expect(contarPost(fetchMock, '/api/caja/pedidos')).toBe(1)
+  })
+
+  it('la búsqueda filtra el catálogo en vivo', async () => {
+    instalarFetch([...RUTAS_BASE])
+    renderPagina()
+
+    await screen.findByText('Gordita de chicharrón')
+    await userEvent.type(
+      screen.getByPlaceholderText('Buscar producto...'),
+      'horchata',
+    )
+
+    expect(screen.getByText('Agua de horchata')).toBeInTheDocument()
+    expect(screen.queryByText('Gordita de chicharrón')).not.toBeInTheDocument()
+
+    await userEvent.clear(screen.getByPlaceholderText('Buscar producto...'))
+    await userEvent.type(
+      screen.getByPlaceholderText('Buscar producto...'),
+      'zzz',
+    )
+    expect(screen.getByText('Sin resultados para tu búsqueda.')).toBeInTheDocument()
+  })
+
+  it('los chips de categoría filtran por categoría', async () => {
+    instalarFetch([...RUTAS_BASE])
+    renderPagina()
+
+    await screen.findByText('Gordita de chicharrón')
+    const chipBebidas = screen.getByRole('button', { name: 'Bebidas' })
+    expect(chipBebidas).toHaveAttribute('aria-pressed', 'false')
+
+    await userEvent.click(chipBebidas)
+
+    expect(chipBebidas).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByText('Agua de horchata')).toBeInTheDocument()
+    expect(screen.queryByText('Gordita de chicharrón')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Todas' }))
+    expect(screen.getByText('Gordita de chicharrón')).toBeInTheDocument()
+  })
+
+  it('el stepper va de 0 a 99 con − deshabilitado en 0', async () => {
+    instalarFetch([...RUTAS_BASE])
+    renderPagina()
+
+    await screen.findByText('Gordita de chicharrón')
+    const agregar = screen.getByRole('button', {
+      name: 'Agregar uno de Gordita de chicharrón',
+    })
+    const quitar = screen.getByRole('button', {
+      name: 'Quitar uno de Gordita de chicharrón',
+    })
+    const cantidad = screen.getByLabelText('Cantidad de Gordita de chicharrón')
+
+    // En 0 el botón − está deshabilitado
+    expect(quitar).toBeDisabled()
+
+    // Tope 99: 100 toques no pasan de 99
+    for (let i = 0; i < 100; i += 1) fireEvent.click(agregar)
+    expect(cantidad).toHaveTextContent('99')
+
+    // Baja y vuelve a deshabilitarse en 0
+    fireEvent.click(quitar)
+    expect(cantidad).toHaveTextContent('98')
+    for (let i = 0; i < 98; i += 1) fireEvent.click(quitar)
+    expect(cantidad).toHaveTextContent('0')
+    expect(quitar).toBeDisabled()
   })
 })
