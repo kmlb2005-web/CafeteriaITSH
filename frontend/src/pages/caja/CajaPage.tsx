@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { CheckoutBar } from '../../components/CheckoutBar'
 import { Button } from '../../components/ui/button'
+import { Icono, IconoChip, type IconoId } from '../../components/Icono'
 import {
   Card,
   CardContent,
@@ -34,7 +35,7 @@ interface Pedido {
   partidas: Partida[]
 }
 
-const ICONO_CATEGORIA: Record<string, string> = {
+const ICONO_CATEGORIA: Record<string, IconoId> = {
   Bebidas: 'icon-bebidas',
   Comida: 'icon-comida',
   Snacks: 'icon-snacks',
@@ -45,7 +46,7 @@ function formatearPrecio(precio: number): string {
   return `$${precio.toFixed(2)}`
 }
 
-function iconoCategoria(categoria: string | null): string {
+function iconoCategoria(categoria: string | null): IconoId {
   return (categoria && ICONO_CATEGORIA[categoria]) || 'icon-menu'
 }
 
@@ -312,6 +313,7 @@ export default function CajaPage() {
               <path d="M15 5.5 8.5 12l6.5 6.5" />
             </svg>
           </Button>
+          <IconoChip id="icon-caja" tono="solido" className="h-11 w-11" />
           <div className="min-w-0">
             <h1 className="font-heading text-2xl font-bold">Cobro</h1>
             <p className="text-xs text-muted-foreground">
@@ -322,7 +324,10 @@ export default function CajaPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Resumen del pedido</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Icono id="icon-pedidos" className="text-secondary" />
+              Resumen del pedido
+            </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3">
             {seleccionados.length === 0 && !ultimo && (
@@ -443,6 +448,7 @@ export default function CajaPage() {
             <path d="M15 5.5 8.5 12l6.5 6.5" />
           </svg>
         </Link>
+        <IconoChip id="icon-menu" tono="solido" className="h-11 w-11" />
         <div className="min-w-0">
           <h1 className="font-heading text-2xl font-bold">Nuevo pedido</h1>
           <p className="text-xs text-muted-foreground">
@@ -454,7 +460,10 @@ export default function CajaPage() {
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <Card>
           <CardHeader>
-            <CardTitle>Menú de hoy</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Icono id="icon-menu" className="text-secondary" />
+              Menú de hoy
+            </CardTitle>
             <CardDescription>
               Selecciona cantidades (0–99) y cobra en efectivo en un solo
               paso.
@@ -478,13 +487,20 @@ export default function CajaPage() {
               <Label htmlFor="buscar-producto" className="sr-only">
                 Buscar producto
               </Label>
-              <Input
-                id="buscar-producto"
-                type="search"
-                placeholder="Buscar producto..."
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-              />
+              <div className="relative">
+                <Icono
+                  id="icon-buscar"
+                  className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                />
+                <Input
+                  id="buscar-producto"
+                  type="search"
+                  className="ps-9"
+                  placeholder="Buscar producto..."
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                />
+              </div>
             </div>
 
             {categorias.length > 0 && (
@@ -499,8 +515,8 @@ export default function CajaPage() {
                   onClick={() => setCategoria(null)}
                   className={
                     categoria === null
-                      ? 'inline-flex min-h-11 items-center rounded-full border border-primary bg-primary/10 px-4 text-sm font-semibold text-primary'
-                      : 'inline-flex min-h-11 items-center rounded-full border border-border bg-surface-container-low px-4 text-sm font-semibold text-foreground hover:bg-muted'
+                      ? 'inline-flex min-h-11 items-center rounded-full border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/30'
+                      : 'inline-flex min-h-11 items-center rounded-full border border-border bg-surface-container-low px-4 text-sm font-semibold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-muted active:scale-95'
                   }
                 >
                   Todas
@@ -513,8 +529,8 @@ export default function CajaPage() {
                     onClick={() => setCategoria(c)}
                     className={
                       categoria === c
-                        ? 'inline-flex min-h-11 items-center gap-1.5 rounded-full border border-primary bg-primary/10 px-4 text-sm font-semibold text-primary'
-                        : 'inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-surface-container-low px-4 text-sm font-semibold text-foreground hover:bg-muted'
+                        ? 'inline-flex min-h-11 items-center gap-1.5 rounded-full border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/30'
+                        : 'inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-surface-container-low px-4 text-sm font-semibold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-muted active:scale-95'
                     }
                   >
                     <svg
@@ -613,7 +629,10 @@ export default function CajaPage() {
         <div className="hidden content-start gap-4 lg:grid">
           <Card>
             <CardHeader>
-              <CardTitle>Cobro</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Icono id="icon-caja" className="text-secondary" />
+                Cobro
+              </CardTitle>
               <CardDescription>
                 Total calculado con los precios vigentes del menú.
               </CardDescription>

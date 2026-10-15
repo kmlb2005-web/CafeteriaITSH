@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { Button } from '../../components/ui/button'
+import { IconoChip } from '../../components/Icono'
 import { Card, CardContent } from '../../components/ui/card'
 import { ApiError, api } from '../../lib/api'
 
@@ -49,6 +50,7 @@ export default function CajaInicioPage() {
   return (
     <div className="grid gap-4 entrada">
       <header className="grid gap-1">
+        <IconoChip id="icon-caja" tono="solido" className="h-11 w-11" />
         <p className="text-sm text-muted-foreground">{fecha}</p>
         <h1 className="font-heading text-2xl font-bold">
           Cafetería ITSH · Caja

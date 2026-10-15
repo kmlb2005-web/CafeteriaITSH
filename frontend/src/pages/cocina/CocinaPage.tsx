@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { ApiError, api } from '../../lib/api'
 import { Button } from '../../components/ui/button'
+import { Icono, IconoChip } from '../../components/Icono'
 import { Card, CardContent, CardHeader } from '../../components/ui/card'
 
 interface PedidoCocina {
@@ -152,6 +153,7 @@ export default function CocinaPage() {
   return (
     <div className="grid gap-4 entrada">
       <header className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <IconoChip id="icon-comida" tono="solido" className="h-11 w-11" />
         <div className="min-w-0 flex-1">
           <h1 className="font-heading text-2xl font-bold">
             Tablero de cocina
@@ -266,10 +268,11 @@ export default function CocinaPage() {
                 <p
                   className={
                     retrasado
-                      ? 'text-xs font-bold text-destructive'
-                      : 'text-xs text-muted-foreground'
+                      ? 'flex items-center gap-1 text-xs font-bold text-destructive'
+                      : 'flex items-center gap-1 text-xs text-muted-foreground'
                   }
                 >
+                  {retrasado && <Icono id="icon-alerta" className="h-4 w-4" />}
                   {retrasado
                     ? '¡Retrasado!'
                     : transcurrido(pedido.creado_en, ahora)}

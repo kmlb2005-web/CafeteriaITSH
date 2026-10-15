@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { CheckoutBar } from '../../components/CheckoutBar'
 import { Button } from '../../components/ui/button'
+import { Icono, IconoChip, type IconoId } from '../../components/Icono'
 import {
   Card,
   CardContent,
@@ -35,7 +36,7 @@ interface RespuestaMenu {
   items: ItemMenu[]
 }
 
-const ICONO_CATEGORIA: Record<string, string> = {
+const ICONO_CATEGORIA: Record<string, IconoId> = {
   Bebidas: 'icon-bebidas',
   Comida: 'icon-comida',
   Snacks: 'icon-snacks',
@@ -46,7 +47,7 @@ function formatearPrecio(precio: number): string {
   return `$${precio.toFixed(2)}`
 }
 
-function iconoCategoria(categoria: string | null): string {
+function iconoCategoria(categoria: string | null): IconoId {
   return (categoria && ICONO_CATEGORIA[categoria]) || 'icon-menu'
 }
 
@@ -167,13 +168,20 @@ export default function MenuPage() {
         <label htmlFor="buscar-producto" className="sr-only">
           Buscar producto
         </label>
-        <Input
-          id="buscar-producto"
-          type="search"
-          placeholder="Buscar producto..."
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-        />
+        <div className="relative">
+          <Icono
+            id="icon-buscar"
+            className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            id="buscar-producto"
+            type="search"
+            className="ps-9"
+            placeholder="Buscar producto..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+        </div>
       </div>
 
       {categorias.length > 0 && (
@@ -258,7 +266,14 @@ export default function MenuPage() {
               >
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-base">{item.nombre}</CardTitle>
+                    <div className="flex min-w-0 items-center gap-2">
+                      <IconoChip
+                        id={iconoCategoria(item.categoria)}
+                        tono="cafe"
+                        className="h-8 w-8 rounded-lg"
+                      />
+                      <CardTitle className="text-base">{item.nombre}</CardTitle>
+                    </div>
                     {item.especial && (
                       <span className="shrink-0 rounded-full bg-[#6B3F23] px-2 py-0.5 text-xs font-bold text-white">
                         Especial

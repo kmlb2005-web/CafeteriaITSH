@@ -4,6 +4,7 @@ import { ApiError } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { RUTA_POR_ROL } from '../../lib/roles'
 import { Button } from '../../components/ui/button'
+import { IconoChip } from '../../components/Icono'
 import {
   Card,
   CardContent,
@@ -75,6 +76,11 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center px-4 entrada">
       <Card className="w-full max-w-sm border-primary/20">
         <CardHeader>
+          <IconoChip
+            id="icon-bebidas"
+            tono="solido"
+            className="mb-1 h-11 w-11"
+          />
           <CardTitle className="text-xl">Iniciar sesión</CardTitle>
           <CardDescription>
             Sistema de Pedidos Anticipados — Cafetería ITSH

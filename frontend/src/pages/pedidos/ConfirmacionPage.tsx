@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { ApiError, api } from '../../lib/api'
 import { Button } from '../../components/ui/button'
+import { IconoChip } from '../../components/Icono'
 import {
   Card,
   CardContent,
@@ -105,7 +106,13 @@ export default function ConfirmacionPage() {
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <CardTitle>Confirmación de pedido</CardTitle>
+            <span className="flex items-center gap-2">
+              <IconoChip
+                id={pagado ? 'icon-check' : 'icon-reloj'}
+                tono={pagado ? 'verde' : 'cafe'}
+              />
+              <CardTitle>Confirmación de pedido</CardTitle>
+            </span>
             <span
               className={`rounded-full px-2.5 py-1 text-xs font-semibold text-white shadow-sm ${COLOR_ESTADO[pedido.estado] ?? 'bg-status-pending'}`}
             >

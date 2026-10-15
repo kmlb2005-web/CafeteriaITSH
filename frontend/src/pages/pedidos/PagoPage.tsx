@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ApiError, api } from '../../lib/api'
 import { Button } from '../../components/ui/button'
+import { Icono, IconoChip } from '../../components/Icono'
 import {
   Card,
   CardContent,
@@ -130,6 +131,7 @@ export default function PagoPage() {
     return (
       <Card>
         <CardHeader>
+          <IconoChip id="icon-check" className="mb-1" />
           <CardTitle>Este pedido ya está pagado</CardTitle>
           <CardDescription>
             Folio <span className="font-mono font-semibold">{pedido.numero}</span>{' '}
@@ -152,6 +154,7 @@ export default function PagoPage() {
     return (
       <Card>
         <CardHeader>
+          <IconoChip id="icon-alerta" tono="cafe" className="mb-1" />
           <CardTitle>Pedido cancelado</CardTitle>
           <CardDescription>
             Folio <span className="font-mono font-semibold">{pedido.numero}</span>{' '}
@@ -174,6 +177,7 @@ export default function PagoPage() {
     <div className="mx-auto grid max-w-md gap-4 entrada">
       <Card>
         <CardHeader>
+          <IconoChip id="icon-caja" tono="solido" className="mb-1" />
           <CardTitle>Pagar pedido</CardTitle>
           <CardDescription>
             Folio <span className="font-mono font-semibold">{pedido.numero}</span>
@@ -187,7 +191,11 @@ export default function PagoPage() {
             </span>
           </p>
 
-          <p className="rounded-md bg-surface-container-low px-3 py-2 text-xs text-muted-foreground">
+          <p className="flex items-start gap-2 rounded-lg bg-surface-container-low px-3 py-2 text-xs text-muted-foreground">
+            <Icono
+              id="icon-info"
+              className="mt-0.5 h-4 w-4 text-secondary"
+            />
             Este proceso no captura datos de tarjeta: el pago es simulado
             (demo) y solo devuelve una referencia.
           </p>

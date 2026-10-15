@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import { ApiError, api } from '../../lib/api'
 import { Button } from '../../components/ui/button'
+import { Icono, IconoChip } from '../../components/Icono'
 import {
   Card,
   CardContent,
@@ -186,6 +187,7 @@ export default function PlatillosPage() {
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
+            <IconoChip id="icon-platillos" tono="cafe" className="mb-1" />
             <CardTitle>Catálogo de platillos</CardTitle>
             <CardDescription>
               Productos disponibles para armar el menú del día.
@@ -207,13 +209,20 @@ export default function PlatillosPage() {
               <label htmlFor="buscar-platillo" className="sr-only">
                 Buscar platillo
               </label>
-              <Input
-                id="buscar-platillo"
-                type="search"
-                placeholder="Buscar platillo..."
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-              />
+              <div className="relative">
+                <Icono
+                  id="icon-buscar"
+                  className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                />
+                <Input
+                  id="buscar-platillo"
+                  type="search"
+                  className="ps-9"
+                  placeholder="Buscar platillo..."
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                />
+              </div>
             </div>
           )}
 
@@ -341,6 +350,7 @@ export default function PlatillosPage() {
 
       <Card>
         <CardHeader>
+          <IconoChip id="icon-platillos" className="mb-1" />
           <CardTitle>
             {editandoId === null ? 'Nuevo platillo' : 'Editar platillo'}
           </CardTitle>

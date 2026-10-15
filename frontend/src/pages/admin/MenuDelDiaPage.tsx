@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { ApiError, api } from '../../lib/api'
 import { Button } from '../../components/ui/button'
+import { IconoChip } from '../../components/Icono'
 import {
   Card,
   CardContent,
@@ -138,6 +139,7 @@ export default function MenuDelDiaPage() {
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-end justify-between gap-3">
           <div className="min-w-0">
+            <IconoChip id="icon-menu" className="mb-1" />
             <CardTitle>Menú del día</CardTitle>
             <CardDescription>
               Los cambios se reflejan de inmediato en la consulta de los
@@ -202,6 +204,7 @@ export default function MenuDelDiaPage() {
 
       <Card>
         <CardHeader>
+          <IconoChip id="icon-platillos" tono="cafe" className="mb-1" />
           <CardTitle>Agregar al menú</CardTitle>
           <CardDescription>Asigna el precio del día.</CardDescription>
         </CardHeader>

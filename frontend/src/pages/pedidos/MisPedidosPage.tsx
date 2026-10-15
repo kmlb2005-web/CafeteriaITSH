@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { ApiError, api } from '../../lib/api'
 import { Button } from '../../components/ui/button'
+import { Icono, IconoChip } from '../../components/Icono'
 import {
   Card,
   CardContent,
@@ -153,6 +154,7 @@ export default function MisPedidosPage() {
           <CardDescription>Tu historial de pedidos en la cafetería.</CardDescription>
         </CardHeader>
         <CardContent className="grid justify-items-center gap-4 py-6 text-center">
+          <IconoChip id="icon-pedidos" tono="cafe" className="h-12 w-12" />
           <p className="text-sm text-muted-foreground">
             Aún no tienes pedidos. ¡Anímate a pedir!
           </p>
@@ -174,6 +176,7 @@ export default function MisPedidosPage() {
   return (
     <div className="mx-auto grid max-w-2xl gap-3 entrada">
       <header className="flex flex-wrap items-center gap-3">
+        <IconoChip id="icon-pedidos" />
         <h1 className="min-w-0 flex-1 font-heading text-xl font-bold">
           Mis pedidos
         </h1>
@@ -215,7 +218,8 @@ export default function MisPedidosPage() {
 
             <CardContent className="grid gap-3">
               {p.aviso_listo && (
-                <p className="rounded-md border border-status-ready/40 bg-status-ready/10 px-3 py-2 text-sm font-semibold text-status-ready">
+                <p className="flex items-center gap-2 rounded-lg border border-status-ready/40 bg-status-ready/10 px-3 py-2 text-sm font-semibold text-status-ready">
+                  <Icono id="icon-check" className="h-4 w-4" />
                   ¡Listo para recoger! Pasa por el mostrador.
                 </p>
               )}

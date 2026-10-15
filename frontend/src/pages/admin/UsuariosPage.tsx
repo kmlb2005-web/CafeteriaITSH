@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { ApiError, api } from '../../lib/api'
 import { ROL_ETIQUETA, type Rol } from '../../lib/roles'
 import { Button } from '../../components/ui/button'
+import { Icono, IconoChip } from '../../components/Icono'
 import {
   Card,
   CardContent,
@@ -201,6 +202,7 @@ export default function UsuariosPage() {
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
+            <IconoChip id="icon-usuarios" className="mb-1" />
             <CardTitle>Usuarios operativos</CardTitle>
             <CardDescription>Cajeros y cocineros del sistema.</CardDescription>
           </div>
@@ -220,13 +222,20 @@ export default function UsuariosPage() {
               <label htmlFor="buscar-usuario" className="sr-only">
                 Buscar usuario
               </label>
-              <Input
-                id="buscar-usuario"
-                type="search"
-                placeholder="Buscar usuario..."
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-              />
+              <div className="relative">
+                <Icono
+                  id="icon-buscar"
+                  className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                />
+                <Input
+                  id="buscar-usuario"
+                  type="search"
+                  className="ps-9"
+                  placeholder="Buscar usuario..."
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                />
+              </div>
             </div>
           )}
 
@@ -359,6 +368,7 @@ export default function UsuariosPage() {
 
       <Card>
         <CardHeader>
+          <IconoChip id="icon-usuarios" tono="cafe" className="mb-1" />
           <CardTitle>
             {editandoId === null ? 'Nuevo usuario' : 'Editar usuario'}
           </CardTitle>

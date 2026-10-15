@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { Button } from '../../components/ui/button'
+import { Icono, IconoChip } from '../../components/Icono'
 import {
   Card,
   CardContent,
@@ -75,6 +76,7 @@ export default function ConfirmarPedidoPage() {
     return (
       <Card>
         <CardHeader>
+          <IconoChip id="icon-menu" tono="cafe" className="mb-1" />
           <CardTitle>Tu carrito está vacío</CardTitle>
           <CardDescription>
             Agrega platillos del menú del día para armar tu pedido.
@@ -148,6 +150,7 @@ export default function ConfirmarPedidoPage() {
         >
           {flechaRegresar()}
         </Link>
+        <IconoChip id="icon-pedidos" tono="solido" className="h-11 w-11" />
         <div className="min-w-0">
           <h1 className="font-heading text-2xl font-bold">
             Revisa tu pedido
@@ -161,7 +164,10 @@ export default function ConfirmarPedidoPage() {
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <Card>
           <CardHeader>
-            <CardTitle>Resumen</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Icono id="icon-pedidos" className="text-secondary" />
+              Resumen
+            </CardTitle>
             <CardDescription>
               El total se calcula con los precios vigentes del menú.
             </CardDescription>
@@ -201,7 +207,10 @@ export default function ConfirmarPedidoPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Confirmar</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Icono id="icon-check" className="text-secondary" />
+              Confirmar
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form
@@ -224,7 +233,8 @@ export default function ConfirmarPedidoPage() {
                   value={hora}
                   onChange={(e) => setHora(e.target.value)}
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Icono id="icon-reloj" className="h-4 w-4 text-secondary" />
                   Mínimo 10 minutos de anticipación.
                 </p>
               </div>
