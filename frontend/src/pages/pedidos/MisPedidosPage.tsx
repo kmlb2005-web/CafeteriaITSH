@@ -172,14 +172,14 @@ export default function MisPedidosPage() {
   ).length
 
   return (
-    <div className="mx-auto grid max-w-2xl gap-3">
+    <div className="mx-auto grid max-w-2xl gap-3 entrada">
       <header className="flex flex-wrap items-center gap-3">
         <h1 className="min-w-0 flex-1 font-heading text-xl font-bold">
           Mis pedidos
         </h1>
         <span
           aria-label={`${activos} pedidos activos`}
-          className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground"
+          className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground shadow-sm shadow-primary/40"
         >
           {activos} {activos === 1 ? 'activo' : 'activos'}
         </span>
@@ -191,13 +191,17 @@ export default function MisPedidosPage() {
         return (
           <Card
             key={p.id}
-            className={p.aviso_listo ? 'border-status-ready shadow-sm' : ''}
+            className={`acento-superior transition-all duration-200 hover:-translate-y-0.5 ${
+              p.aviso_listo
+                ? 'border-status-ready shadow-sm ring-1 ring-status-ready/30'
+                : ''
+            }`}
           >
             <CardHeader className="pb-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-mono text-sm font-semibold">{p.numero}</span>
                 <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${COLOR_ESTADO[p.estado] ?? 'bg-status-pending'}`}
+                  className={`rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${COLOR_ESTADO[p.estado] ?? 'bg-status-pending'}`}
                 >
                   {p.estado}
                 </span>

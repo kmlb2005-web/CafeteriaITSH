@@ -37,7 +37,7 @@ export function CheckoutBar({
       <div className="h-16 lg:hidden" aria-hidden="true" />
       <div
         className={cn(
-          'fixed inset-x-0 bottom-14 z-20 flex items-center justify-between gap-3 border-t border-border bg-surface-container-lowest/95 px-4 py-3 backdrop-blur lg:static lg:z-auto lg:border-x-0 lg:border-b-0 lg:rounded-t-xl lg:px-0 lg:py-4',
+          'fixed inset-x-0 bottom-14 z-20 flex items-center justify-between gap-3 border-t border-border bg-surface-container-lowest/95 px-4 py-3 shadow-[0_-12px_32px_-26px_rgba(28,25,23,0.8)] backdrop-blur lg:static lg:z-auto lg:border-x-0 lg:border-b-0 lg:rounded-t-xl lg:px-0 lg:py-4 lg:shadow-none',
           className,
         )}
       >

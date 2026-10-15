@@ -70,12 +70,12 @@ export function AppDrawer({
       <nav
         aria-label={`Menú lateral de ${titulo}`}
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-e border-border bg-surface-container-lowest transition-transform duration-200 ease-out lg:static lg:z-auto lg:translate-x-0 lg:transition-none',
+          'fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-e border-border bg-surface-container-lowest shadow-[10px_0_32px_-22px_rgba(28,25,23,0.9)] transition-transform duration-200 ease-out lg:static lg:z-auto lg:translate-x-0 lg:shadow-none lg:transition-none',
           abierto ? 'translate-x-0' : '-translate-x-full',
           !escritorioFijo && 'lg:hidden',
         )}
       >
-        <div className="border-b border-border px-4 py-4">
+        <div className="border-b border-border bg-gradient-to-b from-primary/10 to-transparent px-4 py-4">
           <p className="truncate font-heading text-base font-bold">
             {usuario?.nombre ?? '…'}
           </p>
@@ -98,10 +98,10 @@ export function AppDrawer({
                   }}
                   className={({ isActive }) =>
                     cn(
-                      'flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold transition-colors',
+                      'flex items-center gap-2 rounded-lg border-s-2 px-3 py-2.5 text-sm font-semibold transition-all duration-200',
                       isActive
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-foreground hover:bg-muted',
+                        ? 'border-primary bg-primary/10 text-primary shadow-sm'
+                        : 'border-transparent text-foreground hover:translate-x-0.5 hover:bg-muted',
                     )
                   }
                 >
@@ -116,7 +116,7 @@ export function AppDrawer({
                   )}
                   <span className="truncate">{item.etiqueta}</span>
                   {n > 0 && (
-                    <span className="ms-auto rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">
+                    <span className="ms-auto rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground shadow-sm shadow-primary/40">
                       {n}
                     </span>
                   )}

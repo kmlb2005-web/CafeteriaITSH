@@ -72,8 +72,8 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
-      <Card className="w-full max-w-sm">
+    <main className="flex min-h-screen items-center justify-center px-4 entrada">
+      <Card className="w-full max-w-sm border-primary/20">
         <CardHeader>
           <CardTitle className="text-xl">Iniciar sesión</CardTitle>
           <CardDescription>

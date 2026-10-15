@@ -25,7 +25,7 @@ export function BottomBar({ items, contador = {} }: BottomBarProps) {
   return (
     <nav
       aria-label="Secciones"
-      className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface-container-lowest/95 backdrop-blur lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface-container-lowest/95 shadow-[0_-12px_32px_-24px_rgba(28,25,23,0.8)] backdrop-blur lg:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <ul className="flex">
@@ -45,21 +45,30 @@ export function BottomBar({ items, contador = {} }: BottomBarProps) {
                   )
                 }
               >
-                <span className="relative">
-                  <svg
-                    className="h-5 w-5"
-                    aria-hidden="true"
-                    focusable="false"
-                  >
-                    <use href={`/icons.svg#${item.icono}`} />
-                  </svg>
-                  {n > 0 && (
-                    <span className="absolute -top-1.5 -right-3 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold leading-none text-primary-foreground">
-                      {n}
+                {({ isActive }) => (
+                  <>
+                    <span
+                      className={cn(
+                        'relative rounded-full px-3 py-1 transition-all duration-200',
+                        isActive && 'bg-primary/10 text-primary shadow-sm',
+                      )}
+                    >
+                      <svg
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <use href={`/icons.svg#${item.icono}`} />
+                      </svg>
+                      {n > 0 && (
+                        <span className="absolute -top-1.5 -right-3 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold leading-none text-primary-foreground shadow-sm shadow-primary/40">
+                          {n}
+                        </span>
+                      )}
                     </span>
-                  )}
-                </span>
-                <span className="max-w-full truncate">{item.etiqueta}</span>
+                    <span className="max-w-full truncate">{item.etiqueta}</span>
+                  </>
+                )}
               </NavLink>
             </li>
           )

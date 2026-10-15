@@ -101,13 +101,13 @@ export default function ConfirmacionPage() {
   const pagado = pedido.estado === 'Pagado'
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-2xl entrada">
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <CardTitle>Confirmación de pedido</CardTitle>
             <span
-              className={`rounded-full px-2.5 py-1 text-xs font-semibold text-white ${COLOR_ESTADO[pedido.estado] ?? 'bg-status-pending'}`}
+              className={`rounded-full px-2.5 py-1 text-xs font-semibold text-white shadow-sm ${COLOR_ESTADO[pedido.estado] ?? 'bg-status-pending'}`}
             >
               {pedido.estado}
             </span>

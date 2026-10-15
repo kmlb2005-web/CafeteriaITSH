@@ -171,7 +171,7 @@ export default function PagoPage() {
   }
 
   return (
-    <div className="mx-auto grid max-w-md gap-4">
+    <div className="mx-auto grid max-w-md gap-4 entrada">
       <Card>
         <CardHeader>
           <CardTitle>Pagar pedido</CardTitle>

@@ -390,7 +390,7 @@ export default function CajaPage() {
                   <p className="font-mono text-xl font-bold">
                     {ultimo.pedido.numero}
                   </p>
-                  <span className="rounded-full bg-status-paid px-2 py-0.5 text-xs font-bold text-white">
+                  <span className="rounded-full bg-status-paid px-2 py-0.5 text-xs font-bold text-white shadow-sm">
                     Pagado
                   </span>
                 </div>
@@ -422,7 +422,7 @@ export default function CajaPage() {
 
   /** Pantalla 2: catálogo y carrito. */
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 entrada">
       <div className="flex items-center gap-3">
         <Link
           to="/caja"

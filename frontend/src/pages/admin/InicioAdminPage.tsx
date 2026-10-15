@@ -106,7 +106,7 @@ export default function InicioAdminPage() {
   }
 
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-5 entrada">
       <header className="grid gap-1">
         <p className="text-sm text-muted-foreground">{fechaLarga()}</p>
         <h1 className="font-heading text-2xl font-bold">
@@ -117,7 +117,7 @@ export default function InicioAdminPage() {
       <ul className="grid gap-3 sm:grid-cols-3">
         <li>
           <Link to="/admin/usuarios" className="block h-full">
-            <Card className="h-full transition-colors hover:border-primary/50">
+            <Card className="acento-superior h-full transition-all duration-200 hover:-translate-y-1 hover:border-primary/60 hover:shadow-md">
               <CardHeader className="pb-2">
                 <CardTitle className="text-base">Usuarios</CardTitle>
                 <CardDescription>
@@ -129,7 +129,7 @@ export default function InicioAdminPage() {
         </li>
         <li>
           <Link to="/admin/platillos" className="block h-full">
-            <Card className="h-full transition-colors hover:border-primary/50">
+            <Card className="acento-superior h-full transition-all duration-200 hover:-translate-y-1 hover:border-primary/60 hover:shadow-md">
               <CardHeader className="pb-2">
                 <CardTitle className="text-base">Platillos</CardTitle>
                 <CardDescription>{platillos.length} en catálogo</CardDescription>
@@ -139,7 +139,7 @@ export default function InicioAdminPage() {
         </li>
         <li>
           <Link to="/admin/menu" className="block h-full">
-            <Card className="h-full transition-colors hover:border-primary/50">
+            <Card className="acento-superior h-full transition-all duration-200 hover:-translate-y-1 hover:border-primary/60 hover:shadow-md">
               <CardHeader className="pb-2">
                 <CardTitle className="text-base">Menú del día</CardTitle>
                 <CardDescription>{publicados} publicados hoy</CardDescription>
@@ -176,8 +176,8 @@ export default function InicioAdminPage() {
               key={item.id}
               className={
                 item.disponible
-                  ? 'flex min-h-14 items-center gap-3 rounded-md border border-border bg-surface-container-low px-3 py-2'
-                  : 'flex min-h-14 items-center gap-3 rounded-md border border-border bg-surface-container-low px-3 py-2 opacity-60'
+                  ? 'flex min-h-14 items-center gap-3 rounded-lg border border-border bg-surface-container-low px-3 py-2 transition-all duration-200 hover:border-primary/50 hover:bg-surface-container-lowest'
+                  : 'flex min-h-14 items-center gap-3 rounded-lg border border-border bg-surface-container-low px-3 py-2 opacity-60'
               }
             >
               <div className="min-w-0 flex-1">

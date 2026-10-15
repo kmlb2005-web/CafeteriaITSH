@@ -135,7 +135,7 @@ export default function MenuPage() {
   const total = totalCarrito(lineas)
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 entrada">
       <header className="grid gap-1">
         <p className="text-sm text-muted-foreground">
           {new Date().toLocaleDateString('es-MX', {
@@ -148,7 +148,7 @@ export default function MenuPage() {
         <h1 className="font-heading text-2xl font-bold">Menú del día</h1>
       </header>
 
-      <Card className="bg-surface-container">
+      <Card className="border-primary/20 bg-gradient-to-r from-primary/10 to-secondary/10">
         <CardContent className="flex items-center gap-4 py-5">
           <svg
             className="h-9 w-9 shrink-0 text-primary"
@@ -188,8 +188,8 @@ export default function MenuPage() {
             onClick={() => setCategoria(null)}
             className={
               categoria === null
-                ? 'inline-flex min-h-11 items-center rounded-full border border-primary bg-primary/10 px-4 text-sm font-semibold text-primary'
-                : 'inline-flex min-h-11 items-center rounded-full border border-border bg-surface-container-low px-4 text-sm font-semibold text-foreground hover:bg-muted'
+                ? 'inline-flex min-h-11 items-center rounded-full border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/30'
+                : 'inline-flex min-h-11 items-center rounded-full border border-border bg-surface-container-low px-4 text-sm font-semibold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-muted active:scale-95'
             }
           >
             Todas
@@ -202,8 +202,8 @@ export default function MenuPage() {
               onClick={() => setCategoria(c)}
               className={
                 categoria === c
-                  ? 'inline-flex min-h-11 items-center gap-1.5 rounded-full border border-primary bg-primary/10 px-4 text-sm font-semibold text-primary'
-                  : 'inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-surface-container-low px-4 text-sm font-semibold text-foreground hover:bg-muted'
+                  ? 'inline-flex min-h-11 items-center gap-1.5 rounded-full border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/30'
+                  : 'inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-surface-container-low px-4 text-sm font-semibold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-muted active:scale-95'
               }
             >
               <svg className="h-4 w-4" aria-hidden="true" focusable="false">
@@ -251,7 +251,11 @@ export default function MenuPage() {
             lineas.find((l) => l.menu_dia_id === item.id)?.cantidad ?? 0
           return (
             <li key={item.id}>
-              <Card className={item.disponible ? undefined : 'opacity-60'}>
+              <Card
+                className={`h-full transition-all duration-200 hover:-translate-y-1 hover:shadow-lg ${
+                  item.disponible ? '' : 'opacity-60'
+                }`}
+              >
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-base">{item.nombre}</CardTitle>

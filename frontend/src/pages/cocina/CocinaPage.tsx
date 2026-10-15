@@ -150,7 +150,7 @@ export default function CocinaPage() {
         )} s`
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 entrada">
       <header className="flex flex-wrap items-center gap-x-3 gap-y-2">
         <div className="min-w-0 flex-1">
           <h1 className="font-heading text-2xl font-bold">
@@ -161,7 +161,7 @@ export default function CocinaPage() {
           </p>
         </div>
         {!cargando && !error && (
-          <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">
+          <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground shadow-sm shadow-primary/40">
             {pedidos.length}{' '}
             {pedidos.length === 1 ? 'pedido' : 'pedidos'}
           </span>
@@ -228,14 +228,17 @@ export default function CocinaPage() {
             pedido.fecha_recoleccion !== null &&
             new Date(pedido.fecha_recoleccion).getTime() < ahora
           return (
-            <Card key={pedido.id}>
+            <Card
+              key={pedido.id}
+              className="acento-superior h-full transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+            >
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-heading text-2xl font-extrabold text-primary">
                     #{pedido.orden}
                   </span>
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-bold text-white ${COLOR_ESTADO[pedido.estado] ?? 'bg-status-pending'}`}
+                    className={`rounded-full px-3 py-1 text-xs font-bold text-white shadow-sm ${COLOR_ESTADO[pedido.estado] ?? 'bg-status-pending'}`}
                   >
                     {pedido.estado}
                   </span>

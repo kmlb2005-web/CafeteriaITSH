@@ -139,7 +139,7 @@ export default function ConfirmarPedidoPage() {
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 entrada">
       <div className="flex items-center gap-3">
         <Link
           to="/menu"

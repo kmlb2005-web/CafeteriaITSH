@@ -102,7 +102,7 @@ export default function EntregasPage() {
   const pendientes = pedidos?.length ?? 0
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 entrada">
       <header className="flex flex-wrap items-center gap-3">
         <div className="min-w-0 flex-1">
           <h1 className="font-heading text-2xl font-bold">Pedidos listos</h1>
@@ -113,7 +113,7 @@ export default function EntregasPage() {
         {!cargando && !error && pedidos !== null && (
           <span
             aria-label={`${pendientes} pedidos pendientes`}
-            className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground"
+            className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground shadow-sm shadow-primary/40"
           >
             {pendientes}
           </span>
@@ -174,11 +174,11 @@ export default function EntregasPage() {
           {pedidos.map((p) => (
             <li
               key={p.id}
-              className="grid gap-3 rounded-lg border border-border bg-surface-container-lowest p-4"
+              className="acento-superior grid gap-3 rounded-xl border border-border bg-surface-container-lowest p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-status-ready/50 hover:shadow-md"
             >
               <div className="flex flex-wrap items-center gap-2">
                 <p className="font-mono text-xl font-bold">{p.numero}</p>
-                <span className="rounded-full bg-status-ready px-2 py-0.5 text-xs font-bold text-white">
+                <span className="rounded-full bg-status-ready px-2 py-0.5 text-xs font-bold text-white shadow-sm">
                   Listo
                 </span>
                 <span className="ms-auto text-xs text-muted-foreground">

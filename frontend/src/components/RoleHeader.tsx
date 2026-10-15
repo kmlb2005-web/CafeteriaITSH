@@ -25,7 +25,7 @@ export function RoleHeader({
   }
 
   return (
-    <header className="sticky top-0 z-10 border-b border-border bg-surface-container-lowest/95 backdrop-blur">
+    <header className="sticky top-0 z-10 border-b border-border bg-surface-container-lowest/95 backdrop-blur after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-gradient-to-r after:from-primary after:to-secondary after:content-['']">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
         {onAbrirMenu && (
           <Button
@@ -50,6 +50,14 @@ export function RoleHeader({
             </svg>
           </Button>
         )}
+        <span
+          aria-hidden="true"
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-sm shadow-primary/40"
+        >
+          <svg className="h-5 w-5" aria-hidden="true" focusable="false">
+            <use href="/icons.svg#icon-bebidas" />
+          </svg>
+        </span>
         <div className="min-w-0 flex-1">
           <p className="truncate font-heading text-lg font-bold leading-tight">
             {titulo}

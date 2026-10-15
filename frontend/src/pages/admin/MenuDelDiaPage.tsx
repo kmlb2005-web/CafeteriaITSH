@@ -134,7 +134,7 @@ export default function MenuDelDiaPage() {
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem] entrada">
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-end justify-between gap-3">
           <div className="min-w-0">
