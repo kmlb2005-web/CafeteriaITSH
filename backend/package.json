@@ -9,6 +9,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
+    "verify": "npm run lint && npm run typecheck && npm run test",
     "migrate": "node scripts/migrate.mjs",
     "seed": "tsx src/db/seed.ts"
   },
