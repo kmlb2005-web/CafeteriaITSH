@@ -36,6 +36,10 @@ const RECOLECCION_OTRO_DIA = `${soloFecha(
 const RECOLECCION_MUY_CERCA = formatearLocal(
   new Date(Date.now() + 5 * 60 * 1000),
 );
+// Borde del límite (O-01): 9 minutos rechaza y 11 acepta. Nunca se prueba
+// exactamente 10, porque el reloj avanza durante la petición.
+const RECOLECCION_9_MIN = formatearLocal(new Date(Date.now() + 9 * 60 * 1000));
+const RECOLECCION_11_MIN = formatearLocal(new Date(Date.now() + 11 * 60 * 1000));
 
 let cookieAdmin = '';
 let cookieCliente = '';
@@ -48,6 +52,7 @@ let idPedido = 0;
 let folio = '';
 let totalPedido = 0;
 let idPedido2 = 0;
+let idMostradorConc = 0; // mostrador cobrado en paralelo (RF-03)
 
 async function login(correo: string, password: string): Promise<string> {
   const res = await request(app).post('/api/auth/login').send({ correo, password });
@@ -133,6 +138,10 @@ afterAll(async () => {
     [EMAIL],
   );
   await execute(`DELETE FROM pedido WHERE usuario_id = ${usuario}`, [EMAIL]);
+  if (idMostradorConc > 0) {
+    await execute('DELETE FROM pago WHERE pedido_id = ?', [idMostradorConc]);
+    await execute('DELETE FROM pedido WHERE id = ?', [idMostradorConc]);
+  }
   await execute('DELETE FROM usuario WHERE correo IN (?, ?)', [EMAIL, EMAIL_2]);
   await execute('DELETE FROM menu_dia WHERE fecha = ? AND platillo_id IN (?, ?)', [
     FECHA,
@@ -179,6 +188,48 @@ describe('POST /api/pedidos — creación anticipada (US1, FR-010/FR-011)', () =
     expect(res.status).toBe(400);
     expect(res.body.error.code).toBe('anticipacion_insuficiente');
     expect(res.body.error.message).toMatch(/10 minutos/);
+  });
+
+  it('rechaza recogida a 9 minutos, justo bajo el límite (400, sin crear)', async () => {
+    const res = await request(app)
+      .post('/api/pedidos')
+      .set('Cookie', cookieCliente)
+      .send({
+        items: [{ menu_dia_id: idMenuA, cantidad: 1 }],
+        fecha_recoleccion: RECOLECCION_9_MIN,
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe('anticipacion_insuficiente');
+
+    // No quedó ningún pedido con esa hora de recogida (no se creó)
+    const creados = await query<{ n: number }>(
+      `SELECT COUNT(*) AS n FROM pedido
+       WHERE fecha_recoleccion = ?
+         AND usuario_id = (SELECT id FROM usuario WHERE correo = ?)`,
+      [RECOLECCION_9_MIN, EMAIL],
+    );
+    expect(creados[0]?.n).toBe(0);
+  });
+
+  it('acepta recogida a 11 minutos, justo sobre el límite (201)', async () => {
+    // Si la corrida cruza la medianoche, la recogida caería en un día
+    // distinto del menú: se omite (mismo criterio que mis-pedidos.test.ts).
+    if (RECOLECCION_11_MIN.slice(0, 10) !== FECHA) return;
+
+    const res = await request(app)
+      .post('/api/pedidos')
+      .set('Cookie', cookieCliente)
+      .send({
+        items: [{ menu_dia_id: idMenuA, cantidad: 1 }],
+        fecha_recoleccion: RECOLECCION_11_MIN,
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body).toMatchObject({
+      estado: 'Pendiente',
+      fecha_recoleccion: RECOLECCION_11_MIN,
+    });
   });
 
   it('rechaza recolección en un día distinto del menú (400)', async () => {
@@ -282,6 +333,68 @@ describe('POST /api/pedidos/:id/pago — cobro (US1, FR-012/FR-013)', () => {
       [idPedido],
     );
     expect(pagos[0]?.n).toBe(1);
+  });
+
+  it('cobros simultáneos: uno gana, cuatro 409, un solo pago y mostrador sin bloquearse (RF-03)', async () => {
+    const creacion = await crearPedido(cookieCliente, {
+      items: [{ menu_dia_id: idMenuA, cantidad: 1 }],
+    });
+    expect(creacion.status).toBe(201);
+    const idConcurrencia = creacion.body.id as number;
+
+    // Pedido de mostrador cobrado al mismo tiempo que los cobros del
+    // anticipado: ambos orígenes operan sin bloquearse. Se omite si la
+    // corrida cruza la medianoche y el menú de prueba ya no es el de hoy
+    // (la caja solo vende el menú de hoy).
+    if (soloFecha(new Date()) === FECHA) {
+      const mostrador = await request(app)
+        .post('/api/caja/pedidos')
+        .set('Cookie', cookieCajero)
+        .send({ items: [{ menu_dia_id: idMenuA, cantidad: 1 }] });
+      if (mostrador.status === 201) idMostradorConc = mostrador.body.id as number;
+    }
+
+    // Las peticiones viajan al mismo tiempo: FOR UPDATE sobre la fila del
+    // pedido serializa el cobro; solo una transición Pendiente → Pagado.
+    const peticiones = Array.from({ length: 5 }, () =>
+      request(app)
+        .post(`/api/pedidos/${idConcurrencia}/pago`)
+        .set('Cookie', cookieCliente)
+        .send({}),
+    );
+    if (idMostradorConc > 0) {
+      peticiones.push(
+        request(app)
+          .post(`/api/caja/pedidos/${idMostradorConc}/pago`)
+          .set('Cookie', cookieCajero),
+      );
+    }
+    const respuestas = await Promise.all(peticiones);
+
+    const exitosos = respuestas.filter((r) => r.status === 200);
+    const rechazados = respuestas.filter((r) => r.status === 409);
+    expect(exitosos).toHaveLength(idMostradorConc > 0 ? 2 : 1);
+    expect(rechazados).toHaveLength(4);
+    for (const r of rechazados) {
+      expect(r.body.error.code).toBe('ya_pagado');
+    }
+
+    const pagos = await query<{ estado: string }>(
+      'SELECT estado FROM pago WHERE pedido_id = ?',
+      [idConcurrencia],
+    );
+    expect(pagos).toHaveLength(1);
+    expect(pagos[0]?.estado).toBe('confirmado');
+
+    // El mostrador también quedó cobrado exactamente una vez
+    if (idMostradorConc > 0) {
+      const pagosMostrador = await query<{ estado: string }>(
+        'SELECT estado FROM pago WHERE pedido_id = ?',
+        [idMostradorConc],
+      );
+      expect(pagosMostrador).toHaveLength(1);
+      expect(pagosMostrador[0]?.estado).toBe('confirmado');
+    }
   });
 
   it('pago rechazado: 402, el pedido sigue Pendiente y el intento queda registrado', async () => {
