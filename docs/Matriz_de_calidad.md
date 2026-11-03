@@ -17,8 +17,8 @@ Backend (Vitest + supertest):
 auth.test.ts, 9 casos, 
 incluido 409 con correo 
 duplicado. 
-Fallido Requisito · Prueba · Resultado. Defecto 
-D-01: el registro responde 409 "Ese correo ya 
+Aprobado Requisito · Prueba · Resultado. Defecto 
+D-01 CERRADO (2026-11-02): el registro responde 409 "Ese correo ya 
 está registrado" (services/auth.ts, línea 74). 
 Solución: aclarar el spec o responder igual en 
 ambos casos. 
@@ -38,9 +38,9 @@ con folio, total y
 detalle congelado en 
 Pendiente y <10 minutos 
 400 sin crear pedido. 
-Aprobado con 
-observación Requisito · Prueba · Resultado. 
-Observación O-01: solo se prueba la recogida a 5 
+Aprobado (O-01 cerrado 2026-11-02) 
+Requisito · Prueba · Resultado. 
+Observación O-01 CERRADA: solo se probaba la recogida a 5 
 minutos; el borde del límite no tiene prueba. 
 Solución: agregar casos de 9 y 11 minutos. 
 RF-03 Spec 005, FR-003: mostrador y 
@@ -57,8 +57,8 @@ pedidos.test.ts, caso
 segundo pago 409 sin 
 duplicar pago, que es 
 secuencial. 
-Sin prueba Requisito · Prueba · Resultado. Defecto 
-D-02: el requisito no tiene evidencia 
+Aprobado Requisito · Prueba · Resultado. Defecto 
+D-02 CERRADO (2026-11-02): antes el requisito no tenía evidencia 
 automatizada. Solución: prueba con 5 cobros 
 simultáneos (1 respuesta 200, 4 respuestas 409, 
 una fila en pago). 
@@ -95,8 +95,8 @@ cocina.test.ts, caso ambos
 orígenes ordenados por 
 llegada con detalle; 
 Pendiente excluido. 
-Fallido Requisito · Prueba · Resultado. Defecto 
-D-03: la prueba falla en cocina.test.ts, línea 
+Aprobado Requisito · Prueba · Resultado. Defecto 
+D-03 CERRADO (2026-11-02): la prueba fallaba en cocina.test.ts, línea 
 144, porque revisa pedidos[0] y este trae 
 null. El defecto está en la prueba, no en el 
 código. Solución: buscar los pedidos por id. 
@@ -154,7 +154,7 @@ flujo del registro.
 • B) Aclarar el spec (recomendada): precisar que la regla aplica al inicio de sesión y que el registro 
 puede avisar que el correo está en uso, porque la persona necesita saberlo. El resultado pasaría a 
 "Aprobado con observación". 
-Resultado: Fallido (el comportamiento contradice el spec). 
+Resultado: Aprobado — D-01 cerrado el 2026-11-02 por aclaración del criterio (docs/Requerimientos_MVP.md, RF-01): el spec sólo exige mensajes claros sin información interna, y en registro un mensaje claro que no revele más datos de la cuenta; el código no se modifica. 
 RF-02 Requisito 
 Archivo: specs/004-advance-orders-payment/spec.md, línea 117. 
 FR-002: El pedido MUST exigir recogida con al menos 10 minutos de anticipación; con menos 
@@ -173,7 +173,7 @@ pedido
 Aprobado 
 Recogida a 9 y a 11 minutos 
 (borde) 
-No existe prueba del límite Sin prueba 
+pedidos.test.ts: 9 min → 400 y 11 min → 201 Aprobado 
 Fragmento clave: 
 
 
@@ -198,7 +198,7 @@ minutos), pero solo se prueba el caso de 5 minutos.
 Solución propuesta: agregar a pedidos.test.ts un caso con recogida a 11 minutos (debe responder 201) y 
 otro a 9 minutos (debe responder 400). No conviene probar exactamente 10 minutos, porque el reloj avanza 
 entre la petición y la validación. 
-Resultado: Aprobado con observación (2 de 2 casos ejecutados; falta la prueba del borde). 
+Resultado: Aprobado — O-01 cerrado el 2026-11-02 con los casos borde de 9 minutos (400, sin crear el pedido) y 11 minutos (201) en pedidos.test.ts. 
 RF-03 Requisito 
 Archivo: specs/005-counter-kitchen/spec.md, línea 120. 
 FR-003: Mostrador y anticipados MUST operar simultáneamente sin bloquearse. 
@@ -219,10 +219,10 @@ Aprobado
 Caso Qué comprueba Resultado 
 Varios cobros al mismo tiempo 
 sobre un pedido 
-No existe prueba Sin prueba 
+pedidos.test.ts: 5 cobros simultáneos, 1×200 y 4×409, un solo pago Aprobado 
 Mostrador y anticipados 
 operando a la vez 
-No existe prueba Sin prueba 
+Misma prueba: pedido de mostrador cobrado en paralelo sin bloquearse Aprobado 
 Fragmento clave: 
 const { status, body } = await api(`/api/pedidos/${id}/pagar`, clienteToken, { 
   method: 'POST', 
@@ -241,7 +241,7 @@ Defecto D-02: el requisito no tiene evidencia automatizada de operación simult�
 Solución propuesta: agregar una prueba que lance 5 peticiones POST /api/pedidos/:id/pagar con 
 Promise.all sobre el mismo pedido y compruebe 1 respuesta 200, 4 respuestas 409 y una sola fila en la tabla 
 pago. 
-Resultado: Sin prueba (no se puede asegurar que el requisito se cumpla). 
+Resultado: Aprobado — D-02 cerrado el 2026-11-02 con la prueba de 5 cobros simultáneos sobre el mismo pedido (1×200, 4×409, una sola fila en pago) y un pedido de mostrador cobrado en paralelo que no se bloquea. 
 RF-04 Requisito 
 Archivo: specs/006-order-tracking-notifications/spec.md, línea 106. 
 FR-003: Al pasar a Listo, el sistema MUST generar un aviso para el dueño desde un módulo 
@@ -301,9 +301,9 @@ Pedido pendiente No aparece en la cola Aprobado
 Orden por llegada El anticipado sale antes que el de mostrador Aprobado 
 fechaRecoleccion del 
 primer pedido de la lista 
-Se esperaba un texto con formato de fecha, pero llegó 
-null 
-Fallido 
+Con la búsqueda por id: el anticipado trae la fecha con formato y el mostrador 
+trae null (correcto: no tiene recogida) 
+Aprobado (D-03 cerrado 2026-11-02) 
 Fragmento clave: 
 const primero = pedidos[0] as { 
   numero: string 
@@ -325,6 +325,20 @@ const anticipado = pedidos.find((p) => p.id === idAnt)
 expect(anticipado?.fechaRecoleccion).toMatch(/^\d{4}-\d{2}-\d{2}T/) 
 const mostrador = pedidos.find((p) => p.id === idMos) 
 expect(mostrador?.fechaRecoleccion).toBeNull() 
-Resultado: Fallido (el defecto está en la prueba, no en el producto). 
+Resultado: Aprobado — D-03 cerrado el 2026-11-02: la prueba busca los pedidos por id y comprueba fecha con formato en el anticipado y null en el mostrador (services/cocina.ts nunca tuvo defecto).
+
+---
+
+## Cierre de defectos — Sprint 6 de calidad (2026-11-02)
+
+| ID | Estado | Solución aplicada | Evidencia |
+|----|--------|-------------------|-----------|
+| D-01 | Cerrado | Criterio aclarado: el spec exige mensajes claros sin información interna; en registro puede avisarse que el correo está en uso | `docs/Requerimientos_MVP.md`, RF-01 |
+| D-02 | Cerrado | Prueba de 5 cobros simultáneos (1×200, 4×409, un solo pago) + mostrador en paralelo | `backend/tests/integration/pedidos.test.ts` |
+| D-03 | Cerrado | La prueba busca los pedidos por id en lugar de tomar el primero | `backend/tests/integration/cocina.test.ts` |
+| O-01 | Cerrado | Casos borde: 9 minutos → 400, 11 minutos → 201 | `backend/tests/integration/pedidos.test.ts` |
+
+**Pendiente para el Sprint 7 (rol cliente)**: O-02 — falta la prueba que
+simula el fallo del aviso y comprueba que el pedido queda en `Listo`. 
 
 
