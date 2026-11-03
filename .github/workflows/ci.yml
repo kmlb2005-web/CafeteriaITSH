@@ -1,0 +1,82 @@
+# CI del aseguramiento de calidad (spec 008-qa-foundation).
+# Dos trabajos de verificación (frontend y backend) + chequeo de secretos.
+# Corre en cada pull request y en cada push a main.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  chequeo-secretos:
+    name: Chequeo de secretos (reglas §21)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fallar si hay un archivo .env versionado
+        shell: bash
+        run: |
+          if git ls-files | grep -E '(^|/)\.env$'; then
+            echo "::error::Hay un archivo .env versionado en el repositorio. Los secretos viven solo en .env local y en la configuracion del workflow (docs/reglas.md seccion 21)."
+            exit 1
+          fi
+          echo "OK: ningun .env versionado (.env.example permitido)."
+
+  frontend:
+    name: Frontend (lint + typecheck + pruebas)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Verificar (lint + typecheck + pruebas)
+        run: npm run verify
+
+  backend:
+    name: Backend (lint + typecheck + pruebas con MySQL)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      # Solo para las pruebas del CI: base efímera y secreto de prueba.
+      # Nunca se versionan (chequeo en el trabajo "chequeo-secretos").
+      DATABASE_URL: mysql://root:cafe_ci@127.0.0.1:3306/cafe_itsh
+      JWT_SECRET: secreto-de-prueba-solo-ci-008
+      NODE_ENV: test
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: cafe_ci
+          MYSQL_DATABASE: cafe_itsh
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -pcafe_ci --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Aplicar esquema y migraciones
+        run: npm run migrate
+      - name: Verificar (lint + typecheck + pruebas)
+        run: npm run verify
