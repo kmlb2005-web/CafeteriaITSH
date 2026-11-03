@@ -3,7 +3,7 @@
 **Fecha**: 2026-11-02 · **Fase 1** de `/speckit.plan`
 
 Esta feature no agrega entidades de negocio ni migraciones. Modela la
-**configificación de calidad** que queda versionada.
+**configuración de calidad** que queda versionada.
 
 ## Entidades de configuración
 

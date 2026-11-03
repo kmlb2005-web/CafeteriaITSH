@@ -54,6 +54,10 @@ jobs:
       DATABASE_URL: mysql://root:cafe_ci@127.0.0.1:3306/cafe_itsh
       JWT_SECRET: secreto-de-prueba-solo-ci-008
       NODE_ENV: test
+      # Cuentas operativas de prueba (solo en el workflow; reglas §21)
+      SEED_ADMIN_PASSWORD: AdminCi!2026
+      SEED_CAJERO_PASSWORD: CajeroCi!2026
+      SEED_COCINERO_PASSWORD: CocineroCi!2026
     services:
       mysql:
         image: mysql:8
@@ -78,5 +82,7 @@ jobs:
         run: npm ci
       - name: Aplicar esquema y migraciones
         run: npm run migrate
+      - name: Seed de cuentas operativas (las pruebas inician sesión con ellas)
+        run: npm run seed
       - name: Verificar (lint + typecheck + pruebas)
         run: npm run verify

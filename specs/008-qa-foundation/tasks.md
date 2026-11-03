@@ -14,13 +14,13 @@ verifica, no las agrega. Sólo se pide validar la ejecución real.
 **Purpose**: dejar versionado el trabajo de calidad en curso antes de
 construir el gate.
 
-- [ ] T001 Crear la rama `spec/008-qa-foundation` desde `spec/007-ui-redesign`
-- [ ] T002 [P] [US2] Commitear las correcciones de pruebas:
+- [x] T001 Crear la rama `spec/008-qa-foundation` desde `spec/007-ui-redesign`
+- [x] T002 [P] [US2] Commitear las correcciones de pruebas:
       `backend/tests/integration/pedidos.test.ts` (borde 9/11 min, cobros
       simultáneos) y `backend/tests/integration/cocina.test.ts` (búsqueda por id)
-- [ ] T003 [P] [US2] Commitear `docs/Matriz_de_calidad.md` y
+- [x] T003 [P] [US2] Commitear `docs/Matriz_de_calidad.md` y
       `docs/Requerimientos_MVP.md`
-- [ ] T004 [P] [US1] Commitear el roadmap de QA en `docs/sprints.md`
+- [x] T004 [P] [US1] Commitear el roadmap de QA en `docs/sprints.md`
       (sprints 6–11)
 
 **Checkpoint**: árbol de trabajo limpio; el gate se construye sobre versión
@@ -33,10 +33,10 @@ final.
 **Purpose**: comando único de verificación — sin él, el CI no tiene qué
 ejecutar.
 
-- [ ] T005 Agregar `"verify": "npm run lint && npm run typecheck && npm test"`
+- [x] T005 Agregar `"verify": "npm run lint && npm run typecheck && npm test"`
       a `backend/package.json`
-- [ ] T006 [P] Agregar `"verify"` equivalente a `frontend/package.json`
-- [ ] T007 Crear `scripts/verify.mjs` (gate raíz, Node sin dependencias:
+- [x] T006 [P] Agregar `"verify"` equivalente a `frontend/package.json`
+- [x] T007 Crear `scripts/verify.mjs` (gate raíz, Node sin dependencias:
       corre `npm run verify` en `backend/` y `frontend/`, imprime resumen y
       propaga código de salida)
 
@@ -52,18 +52,18 @@ error de tipos → trabajos en rojo.
 
 ### Implementation for User Story 1
 
-- [ ] T008 [US1] Crear `.github/workflows/ci.yml` con disparadores
+- [x] T008 [US1] Crear `.github/workflows/ci.yml` con disparadores
       `push: main` y `pull_request` (contrato C3)
-- [ ] T009 [US1] Trabajo `chequeo-secretos`: fallar si `git ls-files`
+- [x] T009 [US1] Trabajo `chequeo-secretos`: fallar si `git ls-files`
       contiene un `.env` real (`.env.example` permitido) — FR-005
-- [ ] T010 [US1] Trabajo `frontend`: Node LTS → `npm ci` →
+- [x] T010 [US1] Trabajo `frontend`: Node LTS → `npm ci` →
       `npm run verify` en `frontend/`
-- [ ] T011 [US1] Trabajo `backend`: servicio `mysql:8` con health-check,
+- [x] T011 [US1] Trabajo `backend`: servicio `mysql:8` con health-check,
       crear base `cafe_itsh`, aplicar `docs/001_crear_esquema.sql` +
       `docs/002_seed_inicial.sql`, `npm ci`, `npm run migrate`,
       `npm run verify` — variables `DATABASE_URL`, `JWT_SECRET`,
       `NODE_ENV=test` sólo en el workflow (FR-004)
-- [ ] T012 [US1] Verificar que ninguna variable del workflow está escrita en
+- [x] T012 [US1] Verificar que ninguna variable del workflow está escrita en
       el repositorio (revisión manual + chequeo T009)
 
 **Checkpoint**: CI verde en un PR real (quickstart §4).
@@ -78,13 +78,13 @@ abierto; `npm test` en verde con los casos nuevos.
 
 ### Implementation for User Story 2
 
-- [ ] T013 [US2] Actualizar `docs/Matriz_de_calidad.md`: D-01 cerrado por
+- [x] T013 [US2] Actualizar `docs/Matriz_de_calidad.md`: D-01 cerrado por
       aclaración (ref. `docs/Requerimientos_MVP.md` RF-01), D-02 cerrado
       (prueba de cobros simultáneos), D-03 cerrado (búsqueda por id), O-01
       cerrado (casos borde 9/11 min); con fecha 2026-11-02 y estado final
-- [ ] T014 [US2] Ejecutar `cd backend && npm run verify` y confirmar que las
+- [x] T014 [US2] Ejecutar `cd backend && npm run verify` y confirmar que las
       pruebas corregidas pasan (89 pruebas)
-- [ ] T015 [P] [US2] Commitear los cierres de la matriz
+- [x] T015 [P] [US2] Commitear los cierres de la matriz
 
 **Checkpoint**: SC-003 — 0 defectos abiertos, 0 requisitos sin prueba.
 
@@ -98,11 +98,11 @@ y corren; conteo coincide con la ejecución.
 
 ### Implementation for User Story 3
 
-- [ ] T016 [US3] Actualizar `AGENTS.md`: sección de verificación con
+- [x] T016 [US3] Actualizar `AGENTS.md`: sección de verificación con
       `node scripts/verify.mjs`, scripts `verify` por paquete y conteo real
       (29 archivos, 178 pruebas a 2026-11-02); eliminar/ajustar la mención
       de "test único"
-- [ ] T017 [US3] Commitear la actualización de `AGENTS.md`
+- [x] T017 [US3] Commitear la actualización de `AGENTS.md`
 
 **Checkpoint**: SC-004 — sin comandos inexistentes ni conteos
 desactualizados.
@@ -111,12 +111,15 @@ desactualizados.
 
 ## Phase 6: Polish & Cross-Cutting
 
-- [ ] T018 [P] Corregir erratas en artefactos speckit de esta spec
+- [x] T018 [P] Corregir erratas en artefactos speckit de esta spec
       (`data-model.md`: "configificación" → "configuración")
 - [ ] T019 Ejecutar la validación completa del quickstart (§1–§5)
 - [ ] T020 Actualizar `docs/sprints.md` marcando el sprint 6 como completado
       con fecha y demo (PR verde)
 - [ ] T021 Merge del PR a `main` (demo del sprint: PR en verde)
+- [x] T022 Corregir `backend/scripts/migrate.mjs`: normalizar los nombres
+      `docs/001_...` registrados por el baseline al mover el SQL a
+      `migrations/` (expuesto al validar `npm run migrate` para el CI)
 
 ---
 
