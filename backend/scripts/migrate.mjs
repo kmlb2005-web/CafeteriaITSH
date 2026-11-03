@@ -39,10 +39,13 @@ async function main() {
     const [appliedRows] = await conn.query(
       'SELECT nombre FROM schema_migrations',
     );
-    const applied = new Set(appliedRows.map((r) => r.nombre));
+    // Normaliza nombres antiguos: el baseline se registró como docs/001_...
+    // cuando vivía en docs/; hoy los archivos están en migrations/001_...
+    const normalizar = (nombre) => nombre.replace(/^docs\//, '');
+    const applied = new Set(appliedRows.map((r) => normalizar(r.nombre)));
 
     // Baseline: si el esquema ya existe pero nada está registrado, registrar
-    // los scripts de docs/ como aplicados.
+    // los scripts del baseline como aplicados (los de migrations/ hoy).
     if (applied.size === 0) {
       const [tables] = await conn.query(
         "SELECT COUNT(*) AS n FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'usuario'",
@@ -53,7 +56,7 @@ async function main() {
             'INSERT INTO schema_migrations (nombre) VALUES (?)',
             [name],
           );
-          applied.add(name);
+          applied.add(normalizar(name));
         }
         console.log(`Baseline registrado: ${BASELINE.join(', ')}`);
       }

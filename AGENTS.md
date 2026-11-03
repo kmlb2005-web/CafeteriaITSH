@@ -8,8 +8,9 @@ App única con rutas por rol (`/admin`, `/caja`, `/cocina`, `/menu`, `/mis-pedid
 - Dos paquetes npm **independentes** (no hay root package.json ni workspaces):
   `backend/` (Express + TS + MySQL) y `frontend/` (React + Vite + Tailwind v4).
   Todos los comandos npm se ejecutan **dentro de la carpeta correspondiente**.
-- `migrations/` — SQL nuevo de esquema (vacío a propósito; ver Migraciones).
-- `specs/00N-*/` — specs por sprint (speckit). `docs/` — reglas, SQL baseline.
+- `migrations/` — SQL de esquema y baseline (001 esquema, 002 seed, 001 pago).
+  `specs/00N-*/` — specs por sprint (speckit). `docs/` — reglas, evidencias de calidad
+  (`Matriz_de_calidad.md`, `Requerimientos_MVP.md`).
   `design/` — documentos de diseño UI/UX por rol (operativo, cocina, cliente).
 - Código, comentarios, mensajes al usuario y docs están **en español**; mantener ese idioma.
 
@@ -22,11 +23,19 @@ App única con rutas por rol (`/admin`, `/caja`, `/cocina`, `/menu`, `/mis-pedid
 | tipos | `npm run typecheck` | `npm run typecheck` |
 | lint | `npm run lint` | `npm run lint` |
 
-Verificación antes de dar por terminada una tarea: `npm run lint && npm run typecheck && npm test`
-dentro de cada paquete que hayas tocado. No existe CI ni pre-commit; esto es la verificación.
+**Verificación de calidad (obligatoria antes de dar por terminada una tarea)**:
 
-Test único: `npx vitest run tests/integration/auth.test.ts` (backend) o
-`npx vitest run src/routes/ProtectedRoute.test.tsx` (frontend).
+- Gate único en la raíz: `node scripts/verify.mjs` — corre `npm run verify`
+  (lint → typecheck → pruebas) en `backend/` y `frontend/` y falla si alguno falla.
+- Por paquete: `cd <paquete> && npm run verify`.
+- **CI**: `.github/workflows/ci.yml` corre en cada PR y en cada push a `main`
+  (frontend; backend con MySQL efímera + `npm run migrate`; chequeo de `.env`
+  versionado). Un PR no debe integrarse con el CI en rojo.
+- Conteo a 2026-11-02: **29 archivos de prueba / 178 pruebas** (backend 9/89,
+  frontend 20/89). Prueba aislada: `npx vitest run tests/integration/auth.test.ts`
+  (backend) o `npx vitest run src/routes/ProtectedRoute.test.tsx` (frontend).
+- Estado de requisitos y defectos: `docs/Matriz_de_calidad.md`; roadmap de
+  calidad por rol en `docs/sprints.md` (sprints 6–11).
 
 ## Backend — gotchas
 
@@ -48,8 +57,8 @@ Test único: `npx vitest run tests/integration/auth.test.ts` (backend) o
 
 ## Migraciones
 
-- El esquema baseline (`docs/001_crear_esquema.sql` + `docs/002_seed_inicial.sql`) ya está
-  registrado por `backend/scripts/migrate.mjs`; **no recrearlo ni migrarlo a mano**.
+- El esquema baseline (`migrations/001_crear_esquema.sql` + `migrations/002_seed_inicial.sql`)
+  se aplica con `npm run migrate` (idempotente); **no recrearlo ni migrarlo a mano**.
 - Todo cambio de esquema nuevo: archivo `migrations/NN_nombre_descriptivo.sql` y
   `cd backend && npm run migrate`. Antes leer `migrations/README.md` — varias tablas
   (ej. `platillo`, `menu_dia`) ya existen en el baseline y no requieren migración.
@@ -58,7 +67,7 @@ Test único: `npx vitest run tests/integration/auth.test.ts` (backend) o
 
 - Ciclo por sprint documentado en `docs/sprints.md`: spec → `/speckit.plan` →
   `/speckit.tasks` → implementar siguiendo `tasks.md` (checkboxes) con tests.
-- Feature activa en `.specify/feature.json` (hoy: `specs/003-menu-management`, Sprint 2).
+- Feature activa en `.specify/feature.json` (hoy: `specs/008-qa-foundation`, Sprint 6).
   Comandos speckit en `.opencode/commands/speckit.*.md`.
 - Al implementar, seguir el `tasks.md` de la feature activa: sus IDs (T001, US1, R1…)
   son la referencia de trazabilidad con `plan.md`, `research.md` y `contracts/`.
