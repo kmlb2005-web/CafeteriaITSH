@@ -114,6 +114,11 @@ desactualizados.
 - [x] T018 [P] Corregir erratas en artefactos speckit de esta spec
       (`data-model.md`: "configificación" → "configuración")
 - [ ] T019 Ejecutar la validación completa del quickstart (§1–§5)
+      - §1–§3 HECHOS localmente: gate verde, migrate+seed sobre MySQL fresco
+        (Docker) y `.env` sin versionar
+      - §4 BLOQUEADO: la cuenta de GitHub está bloqueada por facturación; los
+        jobs del CI no arrancan (run 41730815950, "account is locked due to a
+        billing issue"). Re-ejecutar al desbloquear la cuenta.
 - [ ] T020 Actualizar `docs/sprints.md` marcando el sprint 6 como completado
       con fecha y demo (PR verde)
 - [ ] T021 Merge del PR a `main` (demo del sprint: PR en verde)
