@@ -171,6 +171,11 @@ describe('GET /api/cocina/pedidos — KDS (US2.1, FR-017, SC-S4-03)', () => {
     expect(Number(anticipo?.orden)).toBeGreaterThan(0);
     expect(Number(anticipo?.orden)).toBeLessThan(Number(mostrador?.orden));
 
+    // RF-05: la cola expone la hora de recolección del anticipado con formato
+    // YYYY-MM-DDTHH:mm y la del mostrador en null (D-03: se busca por id)
+    expect(anticipo?.fecha_recoleccion).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
+    expect(mostrador?.fecha_recoleccion).toBeNull();
+
     // Sin cobro no va a cocina (SC del Sprint 3)
     expect(pedidos.some((p) => p.id === idPendiente)).toBe(false);
 

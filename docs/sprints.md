@@ -4,6 +4,10 @@
 **Spec maestra**: `specs/001-cafeteria-preorder-system/spec.md`
 **Duración**: 5 sprints × 2 semanas (10 semanas)
 
+> **Actualización 2026-11-02**: el MVP (sprints 1–5) está completo. Los
+> sprints 6–11 corresponden al **roadmap de aseguramiento de calidad** (ver
+> más abajo), en la misma estructura speckit y con la misma cadencia de demo.
+
 Cada sprint es una feature independiente de speckit con su propio directorio
 `specs/00N-*/`. La spec maestra (001) define el producto completo; cada spec de
 sprint es un subconjunto trazable de ella (historias, FRs y criterios).
@@ -162,6 +166,151 @@ puntos de lealtad).
 - Flujo completo demostrable: menú → selección → pedido → pago → cocina →
   preparación → listo → notificación → recogida.
 - Pruebas de estados, pagos y permisos en verde (Vitest).
+
+---
+
+## Roadmap de Aseguramiento de Calidad — sprints 6–11
+
+**Creado**: 2026-11-02 · **Specs**: `specs/008` a `specs/013` · **Duración estimada**: 6 sprints × 1 semana
+
+Cada sprint de calidad sigue el mismo ciclo speckit (spec → plan → tasks →
+implementar → demo → actualizar este documento) y aporta **evidencia** a
+`docs/Matriz_de_calidad.md` (una sola matriz para todo el proyecto). No se
+agrega funcionalidad nueva: sólo aseguramiento, verificación y proceso.
+
+| Sprint | Semanas (est.) | Feature speckit | Alcance | Demo del sprint |
+|---|---|---|---|---|
+| 6 | 1 (2026-11-02 → 11-08) | `specs/008-qa-foundation/` | Gate de verificación + CI | PR verde en GitHub Actions |
+| 7 | 2 (2026-11-09 → 11-15) | `specs/009-qa-cliente/` | Rol cliente | Flujo cliente con matriz aprobada |
+| 8 | 3 (2026-11-16 → 11-22) | `specs/010-qa-caja/` | Rol cajero | Cobro concurrente + evidencia |
+| 9 | 4 (2026-11-23 → 11-29) | `specs/011-qa-cocina/` | Rol cocinero | KDS verificado + evidencia |
+| 10 | 5 (2026-11-30 → 12-06) | `specs/012-qa-admin/` | Rol administrador | CRUD validado + evidencia |
+| 11 | 6 (2026-12-07 → 12-13) | `specs/013-qa-proceso/` | Cobertura + proceso permanente | `docs/calidad.md` vigente |
+
+**Gate de cierre de cada sprint de calidad**: `node scripts/verify.mjs` en
+verde (ambos paquetes) + CI verde + fila de la matriz con estado y evidencia +
+commit de este documento.
+
+---
+
+## Sprint 6 — Base de calidad y CI (spec 008)
+
+**Feature**: `specs/008-qa-foundation/`
+
+**Objetivo**: que la verificación sea automática y única; cerrar el trabajo de
+calidad en curso.
+
+**Entra**:
+- Commitear el trabajo en curso: fixes de `pedidos.test.ts` (borde 9/11
+  minutos, cobros simultáneos), `cocina.test.ts` (búsqueda por id) y los docs
+  `Matriz_de_calidad.md` + `Requerimientos_MVP.md`.
+- Cerrar en la matriz: D-01 (por aclaración), D-02, D-03 y O-01.
+- Script `verify` en `backend/package.json` y `frontend/package.json` +
+  `scripts/verify.mjs` raíz que corre ambos paquetes.
+- `.github/workflows/ci.yml`: job `frontend` (lint + typecheck + test) y job
+  `backend` con servicio `mysql:8` (esquema `docs/001`+`docs/002` →
+  `npm run migrate` → `npm test`); secretos sólo en el workflow.
+- Chequeo en CI de que `backend/.env` no esté trackeado (reglas §21).
+- Actualizar `AGENTS.md`: secuencia `verify` y conteo real de pruebas.
+
+**No entra**: pruebas nuevas por rol, cobertura de código.
+
+**Criterios de aceptación**:
+- `node scripts/verify.mjs` en verde local (backend y frontend).
+- CI verde en un PR real de GitHub.
+- Matriz sin defectos abiertos (D-01…D-03 y O-01 cerrados con fecha).
+
+---
+
+## Sprint 7 — QA del cliente (spec 009)
+
+**Feature**: `specs/009-qa-cliente/`
+
+**Objetivo**: cerrar con evidencia todo lo que ve y hace el alumno/docente.
+
+**Entra**:
+- Backend: prueba del fallo del aviso (el pedido queda en `Listo`, O-02);
+  403 del cliente contra rutas de caja, cocina y administración; respuestas de
+  error con formato `{ error: { code, message } }` sin trazas.
+- Frontend: estados vacíos/error de `MenuPage` y `MisPedidosPage`;
+  redirección por rol con sesión equivocada; total del carrito.
+- Checklist manual §19 (áreas táctiles ≥44 px, mensajes claros) y capturas en
+  `docs/evidencias/cliente/`.
+- Filas RF-01, RF-02 y RF-04 de la matriz → **Aprobado**.
+
+**Criterios de aceptación**: `verify` en verde, O-02 cerrado, capturas del
+flujo completo, matriz del rol aprobada.
+
+---
+
+## Sprint 8 — QA del cajero (spec 010)
+
+**Feature**: `specs/010-qa-caja/`
+
+**Objetivo**: verificar cobro, entregas y permisos del mostrador.
+
+**Entra**:
+- Backend: 409 por cobro repetido, pedido cancelado o ya entregado; 400 por
+  monto inválido; 403 a no-cajeros; transiciones inválidas.
+- Frontend: manejo de 409/400 en `CajaPage` y `EntregasPage`.
+- Capturas en `docs/evidencias/caja/`; fila RF-03 con la evidencia de la
+  concurrencia.
+
+**Criterios de aceptación**: pruebas de concurrencia y permisos en verde,
+evidencia completa, matriz aprobada.
+
+---
+
+## Sprint 9 — QA del cocinero (spec 011)
+
+**Feature**: `specs/011-qa-cocina/`
+
+**Objetivo**: verificar la cola de cocina y sus permisos.
+
+**Entra**:
+- Backend: cola con `fecha_recoleccion` (RF-05), 409 en transiciones
+  inválidas, 403 a no-cocineros, orden por llegada y exclusión de `Pendiente`.
+- Frontend: `CocinaPage` — cola, estados vacíos, áreas táctiles.
+- Capturas en `docs/evidencias/cocina/`; RF-05 → **Aprobado**.
+
+**Criterios de aceptación**: cola verificada con ambos orígenes, matriz
+aprobada.
+
+---
+
+## Sprint 10 — QA del administrador (spec 012)
+
+**Feature**: `specs/012-qa-admin/`
+
+**Objetivo**: verificar CRUD de platillos, menú y usuarios con permisos.
+
+**Entra**:
+- Backend: platillo/menú duplicado → 409; campos inválidos → 400 (zod); rol
+  inválido → 400; 403 a no-administradores; publicación de menú.
+- Frontend: validación de formularios, estados vacíos, confirmación de
+  borrado.
+- Capturas en `docs/evidencias/admin/`.
+
+**Criterios de aceptación**: CRUD cubierto con permisos, matriz aprobada.
+
+---
+
+## Sprint 11 — Proceso QA permanente (spec 013)
+
+**Feature**: `specs/013-qa-proceso/`
+
+**Objetivo**: que la calidad siga midiéndose y verificándose después del MVP.
+
+**Entra**:
+- `@vitest/coverage-v8` en ambos paquetes → **reporte en CI sin umbral**
+  (dependencia dev justificada; `docs/reglas.md` §20 sólo se amplía para decir
+  que la cobertura se *reporta*).
+- `docs/calidad.md`: Definición de Terminado, checklist por tarea y ciclo de
+  la matriz por sprint.
+- Actualizar `AGENTS.md` con el flujo de calidad vigente.
+
+**Criterios de aceptación**: reporte de cobertura visible en CI,
+`docs/calidad.md` aprobado por la patrocinadora, sin requisitos sin evidencia.
 
 ---
 

@@ -9,9 +9,12 @@ import { ClienteLayout } from './layouts/ClienteLayout'
 import LoginPage from './pages/login/LoginPage'
 import RegistroPage from './pages/registro/RegistroPage'
 import UsuariosPage from './pages/admin/UsuariosPage'
+import InicioAdminPage from './pages/admin/InicioAdminPage'
 import PlatillosPage from './pages/admin/PlatillosPage'
 import MenuDelDiaPage from './pages/admin/MenuDelDiaPage'
+import CajaInicioPage from './pages/caja/CajaInicioPage'
 import CajaPage from './pages/caja/CajaPage'
+import EntregasPage from './pages/caja/EntregasPage'
 import CocinaPage from './pages/cocina/CocinaPage'
 import MenuPage from './pages/menu/MenuPage'
 import MisPedidosPage from './pages/pedidos/MisPedidosPage'
@@ -54,12 +57,13 @@ export default function App() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<UsuariosPage />} />
+            <Route index element={<InicioAdminPage />} />
+            <Route path="usuarios" element={<UsuariosPage />} />
             <Route path="platillos" element={<PlatillosPage />} />
             <Route path="menu" element={<MenuDelDiaPage />} />
           </Route>
 
-          {/* Cajero — esqueletos en Sprint 1, pantalla en Sprint 4 */}
+          {/* Cajero — rediseño 007: inicio, captura y entregas (US1) */}
           <Route
             path="/caja"
             element={
@@ -68,7 +72,9 @@ export default function App() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<CajaPage />} />
+            <Route index element={<CajaInicioPage />} />
+            <Route path="nuevo" element={<CajaPage />} />
+            <Route path="entregas" element={<EntregasPage />} />
           </Route>
 
           {/* Cocinero — esqueletos en Sprint 1, pantalla en Sprint 4 */}

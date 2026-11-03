@@ -763,6 +763,100 @@ export async function transicionarEstado(datos: {
   }
 }
 
+/**
+ * Cancelación de un pedido propio por el cliente (spec 007 US3.5, decisión
+ * aprobada 2026-10-14): solo el dueño y solo mientras esté `Pendiente`
+ * (pago rechazado o sin pagar). Un pedido `Pagado` debe cancelarlo caja;
+ * un pedido ajeno responde 404 sin filtrar existencia.
+ */
+export async function cancelarPedidoPropio(datos: {
+  pedidoId: number;
+  usuarioId: number;
+}): Promise<Pedido> {
+  const conn: PoolConnection = await pool.getConnection();
+  let transaccionCerrada = false;
+  try {
+    await conn.beginTransaction();
+
+    const [filas] = await conn.execute(
+      `SELECT p.id, p.numero, p.usuario_id, p.estado_id, e.nombre AS estado
+       FROM pedido p
+       JOIN estado_pedido e ON e.id = p.estado_id
+       WHERE p.id = ?
+       FOR UPDATE`,
+      [datos.pedidoId],
+    );
+    const fila = (filas as RowDataPacket[])[0] as
+      | {
+          id: number;
+          numero: string;
+          usuario_id: number | null;
+          estado_id: number;
+          estado: string;
+        }
+      | undefined;
+
+    if (!fila || fila.usuario_id !== datos.usuarioId) {
+      await conn.rollback();
+      transaccionCerrada = true;
+      throw new ApiError(404, 'no_encontrado', 'Pedido no encontrado.');
+    }
+    if (fila.estado !== 'Pendiente') {
+      await conn.rollback();
+      transaccionCerrada = true;
+      throw new ApiError(
+        409,
+        'no_cancelable',
+        `El pedido «${fila.numero}» está en «${fila.estado}»: solo puede cancelarse un pedido Pendiente.`,
+      );
+    }
+
+    const [destinos] = await conn.execute(
+      "SELECT id FROM estado_pedido WHERE nombre = 'Cancelado'",
+    );
+    const canceladoId = (destinos as RowDataPacket[])[0]?.id as
+      | number
+      | undefined;
+    if (!canceladoId) {
+      throw new ApiError(
+        500,
+        'configuracion',
+        'El estado «Cancelado» no está configurado.',
+      );
+    }
+
+    await conn.execute('UPDATE pedido SET estado_id = ? WHERE id = ?', [
+      canceladoId,
+      fila.id,
+    ]);
+    await conn.execute(
+      `INSERT INTO pedido_estado_historial
+         (pedido_id, estado_anterior_id, estado_nuevo_id, cambiado_por)
+       VALUES (?, ?, ?, ?)`,
+      [fila.id, fila.estado_id, canceladoId, datos.usuarioId],
+    );
+    await conn.commit();
+    transaccionCerrada = true;
+
+    const pedido = await consultarPedido(fila.id);
+    if (!pedido) {
+      throw new ApiError(404, 'no_encontrado', 'Pedido no encontrado.');
+    }
+    return pedido;
+  } catch (err) {
+    if (!transaccionCerrada) {
+      try {
+        await conn.rollback();
+      } catch {
+        // sin transacción activa: nada que deshacer
+      }
+    }
+    throw err;
+  } finally {
+    conn.release();
+  }
+}
+
 /** Pedidos `Listo` para entregar en caja (US1.6, FR-013). */
 export async function listarPedidosListos(): Promise<PedidoOperativo[]> {
   const filas = await filasOperativas(['Listo']);

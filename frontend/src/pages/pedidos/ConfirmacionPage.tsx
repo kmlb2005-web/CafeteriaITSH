@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { ApiError, api } from '../../lib/api'
 import { Button } from '../../components/ui/button'
+import { IconoChip } from '../../components/Icono'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '../../components/ui/card'
@@ -24,6 +24,7 @@ interface Pedido {
   numero: string
   estado: string
   total: number
+  cliente_nombre: string | null
   fecha_recoleccion: string | null
   partidas: Partida[]
 }
@@ -101,20 +102,27 @@ export default function ConfirmacionPage() {
   const pagado = pedido.estado === 'Pagado'
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-2xl entrada">
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <CardTitle>Confirmación de pedido</CardTitle>
+            <span className="flex items-center gap-2">
+              <IconoChip
+                id={pagado ? 'icon-check' : 'icon-reloj'}
+                tono={pagado ? 'verde' : 'cafe'}
+              />
+              <CardTitle>Confirmación de pedido</CardTitle>
+            </span>
             <span
-              className={`rounded-full px-2.5 py-1 text-xs font-semibold text-white ${COLOR_ESTADO[pedido.estado] ?? 'bg-status-pending'}`}
+              className={`rounded-full px-2.5 py-1 text-xs font-semibold text-white shadow-sm ${COLOR_ESTADO[pedido.estado] ?? 'bg-status-pending'}`}
             >
               {pedido.estado}
             </span>
           </div>
-          <CardDescription>
-            Folio <span className="font-mono font-semibold">{pedido.numero}</span>
-          </CardDescription>
+          <div>
+            <p className="text-xs text-muted-foreground">Folio</p>
+            <p className="font-mono text-2xl font-bold">{pedido.numero}</p>
+          </div>
         </CardHeader>
         <CardContent className="grid gap-4">
           <p className="text-sm text-muted-foreground">
@@ -124,6 +132,10 @@ export default function ConfirmacionPage() {
           </p>
 
           <dl className="grid grid-cols-2 gap-2 text-sm">
+            <dt className="text-muted-foreground">Cliente</dt>
+            <dd className="font-semibold">
+              {pedido.cliente_nombre ?? 'Sin nombre'}
+            </dd>
             <dt className="text-muted-foreground">Hora de recolección</dt>
             <dd className="font-semibold">
               {pedido.fecha_recoleccion ?? '—'}
@@ -151,13 +163,13 @@ export default function ConfirmacionPage() {
             ))}
           </ul>
 
-          <div className="flex justify-end">
+          <div className="flex flex-wrap justify-end gap-2">
             {pagado ? (
               <Link
-                to="/menu"
+                to="/mis-pedidos"
                 className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
               >
-                Volver al menú
+                Ver mis pedidos
               </Link>
             ) : (
               <Link
@@ -167,6 +179,12 @@ export default function ConfirmacionPage() {
                 Pagar ahora
               </Link>
             )}
+            <Link
+              to="/menu"
+              className="rounded-md border border-border bg-surface-container-low px-4 py-2 text-sm font-semibold hover:bg-muted"
+            >
+              Volver al menú
+            </Link>
           </div>
         </CardContent>
       </Card>

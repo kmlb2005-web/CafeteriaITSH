@@ -47,7 +47,14 @@
   }
 
   body {
+    /* Fondo con profundidad: mismos colores de la paleta (verde y café)
+       en capas de baja opacidad sobre el tono cálido original. */
     background-color: var(--color-background);
+    background-image:
+      radial-gradient(42rem 28rem at 115% -15%, rgba(30, 122, 70, 0.12), transparent 60%),
+      radial-gradient(34rem 24rem at -15% 115%, rgba(138, 106, 79, 0.14), transparent 55%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -57,5 +64,96 @@
   h2,
   h3 {
     font-family: var(--font-heading);
+  }
+
+  ::selection {
+    background: rgba(30, 122, 70, 0.22);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-surface-container-highest);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border);
+    background-clip: padding-box;
+  }
+}
+
+/* Movimiento: nada de la app debe depender de la animación. */
+@media (prefers-reduced-motion: reduce) {
+  .entrada {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .subir:hover {
+    transform: none;
+  }
+}
+
+@keyframes entrada-sube {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer components {
+  /* Entrada suave al montar cada pantalla (spec 007). */
+  .entrada {
+    animation: entrada-sube 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* Elevación discreta al pasar el cursor sobre tarjetas/enlaces. */
+  .subir {
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .subir:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Barra de acento degradada (verde → café) que aparece al hacer hover;
+     la tarjeta debe recortarla con `overflow-hidden` (lo aporta Card). */
+  .acento-superior {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .acento-superior::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .acento-superior:hover::before,
+  .acento-superior:focus-visible::before {
+    opacity: 1;
   }
 }

@@ -99,6 +99,9 @@ describe('MisPedidosPage (cliente)', () => {
     expect(
       screen.getByText('¡Listo para recoger! Pasa por el mostrador.'),
     ).toBeInTheDocument()
+
+    // Badge de pedidos activos en el encabezado (spec 007)
+    expect(screen.getByText('2 activos')).toBeInTheDocument()
   })
 
   it('abre el detalle de un pedido con sus partidas y total (US1.2)', async () => {
@@ -126,7 +129,7 @@ describe('MisPedidosPage (cliente)', () => {
     expect(
       await screen.findByText('Aún no tienes pedidos. ¡Anímate a pedir!'),
     ).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Ver el menú de hoy' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Nuevo pedido' })).toBeInTheDocument()
   })
 
   it('muestra un error con opción de reintentar si la consulta falla', async () => {

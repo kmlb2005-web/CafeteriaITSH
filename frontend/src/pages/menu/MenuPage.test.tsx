@@ -28,6 +28,17 @@ const ITEM_OK = {
   especial: true,
 }
 
+const ITEM_BEBIDA = {
+  id: 3,
+  platillo_id: 3,
+  nombre: 'Agua de horchata',
+  categoria: 'Bebidas',
+  descripcion: null,
+  precio: 25,
+  disponible: true,
+  especial: false,
+}
+
 const ITEM_NO_DISPONIBLE = {
   id: 2,
   platillo_id: 2,
@@ -53,13 +64,15 @@ describe('MenuPage (cliente)', () => {
     vi.unstubAllGlobals()
   })
 
-  it('muestra platillos, precios y el especial del día (FR-009)', async () => {
-    mockMenu(() => json({ fecha: '2026-10-27', items: [ITEM_OK, ITEM_NO_DISPONIBLE] }))
+  it('muestra platillos, precios y el badge Especial (FR-013)', async () => {
+    mockMenu(() =>
+      json({ fecha: '2026-10-27', items: [ITEM_OK, ITEM_NO_DISPONIBLE] }),
+    )
     renderMenu()
 
     expect(await screen.findByText('Gordita de chicharrón')).toBeInTheDocument()
-    expect(screen.getByText('Especial del día')).toBeInTheDocument()
-    expect(screen.getByText('$35.00')).toBeInTheDocument()
+    expect(screen.getByText('Especial')).toBeInTheDocument()
+    expect(screen.getByText(/35\.00/)).toBeInTheDocument()
     expect(screen.getByText('Torta de jamón')).toBeInTheDocument()
   })
 
@@ -69,6 +82,10 @@ describe('MenuPage (cliente)', () => {
 
     expect(await screen.findByText('Torta de jamón')).toBeInTheDocument()
     expect(screen.getByText('No disponible')).toBeInTheDocument()
+    // stepper deshabilitado: no seleccionable
+    expect(
+      screen.getByRole('button', { name: 'Agregar uno de Torta de jamón' }),
+    ).toBeDisabled()
   })
 
   it('muestra un aviso claro cuando no hay menú (caso borde)', async () => {
@@ -76,7 +93,7 @@ describe('MenuPage (cliente)', () => {
     renderMenu()
 
     expect(
-      await screen.findByText('Menú no disponible hoy'),
+      await screen.findByText('El menú aún no está disponible hoy.'),
     ).toBeInTheDocument()
   })
 
@@ -101,26 +118,64 @@ describe('MenuPage (cliente)', () => {
     })
   })
 
-  it('agrega platillos al carrito; los no disponibles no se pueden seleccionar (US1.3)', async () => {
+  it('el stepper agrega al carrito y la barra conduce a la revisión (FR-013)', async () => {
     mockMenu(() =>
       json({ fecha: '2026-10-27', items: [ITEM_OK, ITEM_NO_DISPONIBLE] }),
     )
     renderMenu()
 
     await screen.findByText('Gordita de chicharrón')
-    // solo el platillo disponible tiene botón de agregar (no seleccionable)
+    // solo el platillo disponible tiene stepper activo (no seleccionable)
     expect(
-      screen.getAllByRole('button', { name: 'Agregar al pedido' }),
-    ).toHaveLength(1)
+      screen.getByRole('button', { name: 'Agregar uno de Torta de jamón' }),
+    ).toBeDisabled()
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Agregar al pedido' }),
+      screen.getByRole('button', { name: 'Agregar uno de Gordita de chicharrón' }),
     )
 
+    // la barra flotante muestra cantidad y total con su CTA
+    expect(await screen.findByText('1 platillo')).toBeInTheDocument()
+    expect(screen.getAllByText('$35.00').length).toBeGreaterThan(0)
     expect(
-      await screen.findByRole('link', { name: /revisar pedido/i }),
+      screen.getByRole('button', { name: 'Ver pedido' }),
     ).toBeInTheDocument()
-    expect(screen.getByText('1 en tu pedido · $35.00')).toBeInTheDocument()
     expect(JSON.parse(localStorage.getItem('carrito_v1') ?? '[]')).toHaveLength(1)
+
+    // el stepper refleja la cantidad y permite restarla
+    expect(
+      screen.getByLabelText('Cantidad de Gordita de chicharrón'),
+    ).toHaveTextContent('1')
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Quitar uno de Gordita de chicharrón' }),
+    )
+    expect(
+      screen.getByLabelText('Cantidad de Gordita de chicharrón'),
+    ).toHaveTextContent('0')
+    expect(JSON.parse(localStorage.getItem('carrito_v1') ?? '[]')).toHaveLength(0)
+  })
+
+  it('la búsqueda y los chips filtran el catálogo (FR-013)', async () => {
+    mockMenu(() =>
+      json({ fecha: '2026-10-27', items: [ITEM_OK, ITEM_BEBIDA] }),
+    )
+    renderMenu()
+
+    await screen.findByText('Gordita de chicharrón')
+
+    await userEvent.type(
+      screen.getByPlaceholderText('Buscar producto...'),
+      'horchata',
+    )
+    expect(screen.getByText('Agua de horchata')).toBeInTheDocument()
+    expect(screen.queryByText('Gordita de chicharrón')).not.toBeInTheDocument()
+
+    await userEvent.clear(screen.getByPlaceholderText('Buscar producto...'))
+    await userEvent.click(screen.getByRole('button', { name: 'Bebidas' }))
+    expect(screen.getByText('Agua de horchata')).toBeInTheDocument()
+    expect(screen.queryByText('Gordita de chicharrón')).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Bebidas' }),
+    ).toHaveAttribute('aria-pressed', 'true')
   })
 })

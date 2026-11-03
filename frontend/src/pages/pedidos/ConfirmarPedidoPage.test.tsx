@@ -39,10 +39,13 @@ describe('ConfirmarPedidoPage', () => {
     guardarCarrito(CARRITO_EJEMPLO)
     renderPagina()
 
-    expect(await screen.findByText('Gordita de chicharrón')).toBeInTheDocument()
-    expect(screen.getByText('Café de olla')).toBeInTheDocument()
+    expect(
+      (await screen.findAllByText(/Gordita de chicharrón/)).length,
+    ).toBeGreaterThan(0)
+    expect(screen.getByText(/Café de olla/)).toBeInTheDocument()
     // 35×2 + 20×1
     expect(screen.getByText('$90.00')).toBeInTheDocument()
+    expect(screen.getByText('2×')).toBeInTheDocument()
   })
 
   it('rechaza localmente una hora a menos de 10 minutos, sin llamar al servidor (FR-011)', async () => {
@@ -51,16 +54,20 @@ describe('ConfirmarPedidoPage', () => {
     vi.stubGlobal('fetch', fetchMock)
     renderPagina()
 
-    await screen.findByText('Gordita de chicharrón')
+    await screen.findByText(/Gordita de chicharrón/)
     const hora = screen.getByLabelText(/hora de recolección/i)
     fireEvent.change(hora, {
       target: { value: formatear(new Date(Date.now() + 5 * 60 * 1000)) },
     })
-    await userEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }))
+    await userEvent.click(
+      screen.getByRole('button', { name: /continuar al pago/i }),
+    )
 
     expect(
       await screen.findByText(/al menos 10 minutos/i),
     ).toBeInTheDocument()
+    // el mensaje incluye la hora más temprana posible (design §3.3)
+    expect(screen.getByText(/hora más temprana/i)).toBeInTheDocument()
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
@@ -84,8 +91,10 @@ describe('ConfirmarPedidoPage', () => {
     vi.stubGlobal('fetch', fetchMock)
     renderPagina()
 
-    await screen.findByText('Gordita de chicharrón')
-    await userEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }))
+    await screen.findByText(/Gordita de chicharrón/)
+    await userEvent.click(
+      screen.getByRole('button', { name: /continuar al pago/i }),
+    )
 
     expect(await screen.findByText('pantalla-de-pago')).toBeInTheDocument()
     expect(fetchMock).toHaveBeenCalledTimes(1)

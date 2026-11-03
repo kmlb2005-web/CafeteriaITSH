@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { ApiError, api } from '../../lib/api'
 import { Button } from '../../components/ui/button'
+import { Icono, IconoChip } from '../../components/Icono'
 import {
   Card,
   CardContent,
@@ -153,6 +154,7 @@ export default function MisPedidosPage() {
           <CardDescription>Tu historial de pedidos en la cafetería.</CardDescription>
         </CardHeader>
         <CardContent className="grid justify-items-center gap-4 py-6 text-center">
+          <IconoChip id="icon-pedidos" tono="cafe" className="h-12 w-12" />
           <p className="text-sm text-muted-foreground">
             Aún no tienes pedidos. ¡Anímate a pedir!
           </p>
@@ -160,27 +162,49 @@ export default function MisPedidosPage() {
             to="/menu"
             className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
           >
-            Ver el menú de hoy
+            Nuevo pedido
           </Link>
         </CardContent>
       </Card>
     )
   }
 
+  const activos = pedidos.filter(
+    (p) => p.estado !== 'Entregado' && p.estado !== 'Cancelado',
+  ).length
+
   return (
-    <div className="mx-auto grid max-w-2xl gap-3">
-      <h1 className="font-heading text-xl font-bold">Mis pedidos</h1>
+    <div className="mx-auto grid max-w-2xl gap-3 entrada">
+      <header className="flex flex-wrap items-center gap-3">
+        <IconoChip id="icon-pedidos" />
+        <h1 className="min-w-0 flex-1 font-heading text-xl font-bold">
+          Mis pedidos
+        </h1>
+        <span
+          aria-label={`${activos} pedidos activos`}
+          className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground shadow-sm shadow-primary/40"
+        >
+          {activos} {activos === 1 ? 'activo' : 'activos'}
+        </span>
+      </header>
 
       {pedidos.map((p) => {
         const detalle = detalles[p.id]
         const expandido = abierto === p.id
         return (
-          <Card key={p.id} className={p.aviso_listo ? 'border-status-ready' : ''}>
+          <Card
+            key={p.id}
+            className={`acento-superior transition-all duration-200 hover:-translate-y-0.5 ${
+              p.aviso_listo
+                ? 'border-status-ready shadow-sm ring-1 ring-status-ready/30'
+                : ''
+            }`}
+          >
             <CardHeader className="pb-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-mono text-sm font-semibold">{p.numero}</span>
                 <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${COLOR_ESTADO[p.estado] ?? 'bg-status-pending'}`}
+                  className={`rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${COLOR_ESTADO[p.estado] ?? 'bg-status-pending'}`}
                 >
                   {p.estado}
                 </span>
@@ -194,7 +218,8 @@ export default function MisPedidosPage() {
 
             <CardContent className="grid gap-3">
               {p.aviso_listo && (
-                <p className="rounded-md border border-status-ready/40 bg-status-ready/10 px-3 py-2 text-sm font-semibold text-status-ready">
+                <p className="flex items-center gap-2 rounded-lg border border-status-ready/40 bg-status-ready/10 px-3 py-2 text-sm font-semibold text-status-ready">
+                  <Icono id="icon-check" className="h-4 w-4" />
                   ¡Listo para recoger! Pasa por el mostrador.
                 </p>
               )}
