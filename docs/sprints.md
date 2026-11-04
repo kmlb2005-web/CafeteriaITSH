@@ -229,10 +229,9 @@ calidad en curso.
 
 ## Sprint 7 — QA del cliente (spec 009)
 
-**Estado**: cierre técnico completado el 2026-11-04 — demo: gate y CI en verde
-(registrados en T017/T018) y seis capturas verificadas en
-`docs/evidencias/cliente/`. La integración a `main` queda pendiente del PR
-(T020).
+**Estado**: ✅ COMPLETADO el 2026-11-04 — PR #3 integrado a `main`; demo:
+gate y CI en verde (3/3 jobs) y seis capturas verificadas en
+`docs/evidencias/cliente/`.
 
 **Feature**: `specs/009-qa-cliente/`
 
