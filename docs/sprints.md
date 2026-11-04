@@ -229,6 +229,11 @@ calidad en curso.
 
 ## Sprint 7 — QA del cliente (spec 009)
 
+**Estado**: cierre técnico completado el 2026-11-04 — demo: gate y CI en verde
+(registrados en T017/T018) y seis capturas verificadas en
+`docs/evidencias/cliente/`. La integración a `main` queda pendiente del PR
+(T020).
+
 **Feature**: `specs/009-qa-cliente/`
 
 **Objetivo**: cerrar con evidencia todo lo que ve y hace el alumno/docente.

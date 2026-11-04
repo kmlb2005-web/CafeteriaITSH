@@ -130,7 +130,7 @@ calidad cerrada para el rol cliente.
 **Independent Test**: revisar el repositorio: capturas existentes, checklist
 respondido, matriz sin pÃ¡rrafos "pendiente" del rol cliente.
 
-- [ ] T013 [US3] Recorrer el flujo completo del alumno con la app local y
+- [x] T013 [US3] Recorrer el flujo completo del alumno con la app local y
       guardar las capturas en `docs/evidencias/cliente/` con los nombres
       `01-login.png`, `02-menu.png`, `03-carrito-stepper.png`,
       `04-confirmar-pedido.png`, `05-estado-anticipacion-10-min.png`,
@@ -162,8 +162,9 @@ respondido, matriz sin pÃ¡rrafos "pendiente" del rol cliente.
 - [x] T018 Hacer push de la rama `spec/009-qa-cliente` y confirmar los 3
       trabajos del CI en verde en GitHub (runner `cafeteria-itsh-win`,
       quickstart Â§4)
-- [ ] T019 Actualizar `docs/sprints.md` marcando el Sprint 7 como completado
-      con fecha y demo (gate + CI verde + evidencia)
+- [x] T019 Actualizar `docs/sprints.md` con el cierre técnico del Sprint 7,
+      fecha y demo (gate + CI verde + evidencia); queda pendiente el merge
+      del PR para cerrar la entrega
 - [ ] T020 Abrir el PR a `main`, verificarlo en verde y hacer merge (demo del
       sprint)
 
