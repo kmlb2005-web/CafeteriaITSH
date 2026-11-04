@@ -271,6 +271,32 @@ describe('Notificación de pedido listo (US2, FR-019)', () => {
     expect(await notificacionesDe(idDeB)).toHaveLength(3);
   });
 
+  it('O-02: si el proveedor de avisos lanza un error, el pedido queda Listo', async () => {
+    // Camino más duro que `exitoso: false`: el adaptador lanza una excepción
+    // y el servicio la captura sin bloquear ni revertir (contracts §3)
+    correoMock.mockRejectedValue(new Error('proveedor de avisos caído'));
+
+    expect((await avanzar(idPagado, 'En preparación')).status).toBe(200);
+    const transicion = await avanzar(idPagado, 'Listo');
+    expect(transicion.status).toBe(200); // jamás 500 por el aviso
+
+    // El cliente sigue viendo su pedido en Listo
+    const detalle = await request(app)
+      .get(`/api/pedidos/${idPagado}`)
+      .set('Cookie', cookieA);
+    expect(detalle.status).toBe(200);
+    expect(detalle.body).toMatchObject({ estado: 'Listo' });
+
+    // La auditoría no se pierde: las filas quedan `pendiente` (el detalle del
+    // fallo se registra sólo en el servidor, no se filtra al cliente)
+    const filas = await notificacionesDe(idPagado);
+    expect(filas.length).toBeGreaterThan(0);
+    for (const fila of filas) {
+      expect(fila.estado_envio).toBe('pendiente');
+      expect(fila.detalle_error).toBeNull();
+    }
+  });
+
   it('un pedido de mostrador (sin cuenta) no genera notificación', async () => {
     // Captura real de cajero: el pedido de mostrador no tiene usuario
     const captura = await request(app)
