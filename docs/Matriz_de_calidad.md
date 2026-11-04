@@ -72,16 +72,21 @@ aviso no leído; otros estados no
 generan aviso. Si el aviso falla, el 
 pedido igual queda en Listo. 
 Backend (Vitest + supertest): 
-avisos.test.ts, 4 casos, 
-incluido llegar a Listo 
-genera un aviso; otros 
-estados no. 
-Aprobado con 
-observación Requisito · Prueba · Resultado. 
-Observación O-02: el código cumple, pero 
-ninguna prueba simula el fallo del aviso. 
-Solución: simular el error con vi.spyOn y 
-comprobar que el pedido queda en Listo. 
+mis-pedidos.test.ts, sección de 
+notificaciones, 5 casos, 
+incluido el proveedor lanzando 
+un error (O-02): la transición 
+responde 200 y el pedido queda 
+en Listo. 
+Aprobado (O-02 cerrado 2026-11-03) 
+Requisito · Prueba · Resultado. Defecto 
+D-04 CERRADO (2026-11-03): la fila citaba 
+avisos.test.ts, archivo que nunca existió, y un 
+caso "marcar aviso como visto" sin respaldo en el 
+spec ni en el código. 
+Solución: reescribir la evidencia con el archivo 
+real (mis-pedidos.test.ts) y los casos que el 
+producto sí tiene. 
 RF-05 Spec 007, FR-007: el único cambio 
 de backend permitido es exponer 
 fechaRecoleccion en GET 
@@ -247,40 +252,44 @@ Archivo: specs/006-order-tracking-notifications/spec.md, línea 106.
 FR-003: Al pasar a Listo, el sistema MUST generar un aviso para el dueño desde un módulo 
 separado de la lógica de pedidos; el aviso NUNCA MUST bloquear ni revertir la transición. 
 RF-04 Prueba 
-Archivo: backend/tests/integration/avisos.test.ts, líneas 137 a 155. El manejo del error está en 
-backend/src/services/notificaciones.ts, línea 39, y la llamada se hace después de confirmar la transacción 
-en backend/src/services/pedidos.ts, línea 378. 
-Se crea un pedido pagado y se comprueba que el cliente no tenga aviso. Luego se lleva el pedido a Listo y se 
-comprueba que aparezca un aviso no leído. No hay ninguna prueba que simule que el módulo de avisos falla. 
-
+Archivo: backend/tests/integration/mis-pedidos.test.ts, sección "Notificación de pedido listo" 
+(líneas 217 a 330). El manejo del error está en 
+backend/src/services/notificaciones.service.ts (try/catch propio: "jamás propaga errores"), y la 
+llamada se hace después de confirmar la transacción, desde la consulta de "mis pedidos" 
+(pedidos.controller.ts, línea 97). 
+Se crea un pedido pagado y se comprueba que no tenga notificación. Luego se lleva el pedido a Listo y 
+se comprueba que quede registrada como enviada. Se prueban los tres caminos del proveedor: éxito, 
+fallo controlado (exitoso: false) y excepción lanzada (O-02). 
 
 Caso Qué comprueba Resultado 
-Pedido pagado, aún no Listo El cliente no tiene aviso de ese pedido Aprobado 
-Pedido llevado a Listo Aparece un aviso no leído para el dueño Aprobado 
-Marcar un aviso como visto El dueño recibe 200 y un cliente ajeno recibe 404 Aprobado 
-El módulo de avisos falla No existe prueba Sin prueba 
-Fragmento clave (código que cumple la regla): 
-export async function crearAvisoListo(pedidoId: number, duenioId: number | null): Promise<void> { 
-  try { 
-    if (duenioId === null) return 
-    await proveedor().avisar(pedidoId, duenioId) 
-  } catch (err) { 
-    console.error( 
-      `Aviso de Listo no generado para pedido ${pedidoId}:`, 
-      err instanceof Error ? err.message : err, 
-    ) 
-  } 
-} 
+Pedido Pagado, aún no Listo No genera ninguna notificación Aprobado 
+Pedido llevado a Listo La notificación queda registrada como enviada Aprobado 
+El proveedor responde fallo El pedido queda Listo, la fila queda fallida y se reintenta hasta 
+enviar (máx. 3 intentos) Aprobado 
+El proveedor lanza una 
+excepción (O-02) 
+Transición responde 200 y el cliente sigue viendo el pedido en 
+Listo; la fila queda pendiente y el detalle se registra sólo en 
+el servidor Aprobado (2026-11-03) 
+Pedido de mostrador (sin 
+cuenta) 
+No genera notificación ni llama al proveedor Aprobado 
+Fragmento clave (prueba del fallo del aviso, O-02): 
+correoMock.mockRejectedValue(new Error('proveedor de avisos caído')) 
+expect((await avanzar(idPagado, 'En preparación')).status).toBe(200) 
+expect((await avanzar(idPagado, 'Listo')).status).toBe(200)   // jamás 500 por el aviso 
+expect(detalle.body).toMatchObject({ estado: 'Listo' }) 
 RF-04 Resultado 
-Comando: npx vitest run tests/integration/avisos.test.ts --reporter=verbose 
-Pasaron las 4 pruebas del archivo. 
- 
+Comando: npx vitest run tests/integration/mis-pedidos.test.ts --reporter=verbose 
+Pasaron las 9 pruebas del archivo, incluidas las 5 de este requisito. 
+Pasó además la prueba aislada del sobre de error (npx vitest run tests/unit/error.test.ts). 
 Captura de la ejecución: (evidencias/captura-avisos-listo.png). 
-Observación O-02: el código cumple "nunca bloquear ni revertir", porque el aviso se crea después del commit 
-y su error se captura. Falta una prueba que lo demuestre. 
-Solución propuesta: con vi.spyOn, hacer que el proveedor de avisos lance un error, llevar un pedido a Listo 
-y comprobar que la respuesta es 200 y que el estado queda en Listo. 
-Resultado: Aprobado con observación (4 de 4 casos; falta la prueba del fallo del aviso). 
+Observación O-02 CERRADA (2026-11-03): el código cumplía "nunca bloquear ni revertir", pero ninguna 
+prueba hacía que el proveedor lanzara una excepción. Solución aplicada: en mis-pedidos.test.ts, 
+correoMock.mockRejectedValue(...) al llevar un pedido a Listo, comprobando respuesta 200 y estado 
+Listo (el detalle del fallo queda sólo en el servidor). 
+Resultado: Aprobado — O-02 cerrado el 2026-11-03 (5 de 5 casos; la fila usa el archivo real 
+mis-pedidos.test.ts, ver D-04). 
 RF-05 Requisito 
 Archivo: specs/007-ui-redesign/spec.md, línea 172. 
 FR-007: Único cambio backend permitido: exponer fechaRecoleccion de lectura en GET 
@@ -338,7 +347,15 @@ Resultado: Aprobado — D-03 cerrado el 2026-11-02: la prueba busca los pedidos 
 | D-03 | Cerrado | La prueba busca los pedidos por id en lugar de tomar el primero | `backend/tests/integration/cocina.test.ts` |
 | O-01 | Cerrado | Casos borde: 9 minutos → 400, 11 minutos → 201 | `backend/tests/integration/pedidos.test.ts` |
 
-**Pendiente para el Sprint 7 (rol cliente)**: O-02 — falta la prueba que
-simula el fallo del aviso y comprueba que el pedido queda en `Listo`. 
+## Cierre de defectos — Sprint 7: QA del cliente (2026-11-03)
+
+| ID | Estado | Solución aplicada | Evidencia |
+|----|--------|-------------------|-----------|
+| O-02 | Cerrado | Prueba con `correoMock.mockRejectedValue(...)`: la transición responde 200 y el pedido queda `Listo` (5.º caso de RF-04) | `backend/tests/integration/mis-pedidos.test.ts` |
+| D-04 | Cerrado | RF-04 citaba `avisos.test.ts` (archivo que nunca existió) y un caso "marcar aviso como visto" sin respaldo; la evidencia se reescribió con el archivo real y los casos que el producto tiene | `docs/Matriz_de_calidad.md`, RF-04 |
+
+**Sin pendientes para el rol cliente**: RF-01, RF-02 y RF-04 en Aprobado;
+checklist §19 en `docs/checklist-usabilidad-cliente.md`; capturas en
+`docs/evidencias/cliente/`.
 
 

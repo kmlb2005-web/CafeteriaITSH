@@ -17,7 +17,7 @@ function mockSesion(handler: () => Response): void {
   vi.stubGlobal('fetch', fetchMock)
 }
 
-function renderRuta(entrada: '/admin' | '/caja'): void {
+function renderRuta(entrada: '/admin' | '/caja' | '/menu'): void {
   render(
     <MemoryRouter initialEntries={[entrada]}>
       <AuthProvider>
@@ -36,6 +36,14 @@ function renderRuta(entrada: '/admin' | '/caja'): void {
             element={
               <ProtectedRoute roles={['cajero']}>
                 <div>Módulo de caja</div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/menu"
+            element={
+              <ProtectedRoute roles={['usuario']}>
+                <div>Menú del alumno</div>
               </ProtectedRoute>
             }
           />
@@ -88,5 +96,39 @@ describe('ProtectedRoute', () => {
       await screen.findByText('Módulo administrador'),
     ).toBeInTheDocument()
     expect(screen.queryByText('Acceso denegado')).not.toBeInTheDocument()
+  })
+
+  it('sesión de cajero en una ruta de cliente: denegado con vuelta a /caja (FR-005)', async () => {
+    mockSesion(() =>
+      json({
+        id: 5,
+        nombre: 'Cajero',
+        correo: 'cajero@itsh.mx',
+        rol: 'cajero',
+      }),
+    )
+    renderRuta('/menu')
+
+    expect(await screen.findByText('Acceso denegado')).toBeInTheDocument()
+    expect(screen.queryByText('Menú del alumno')).not.toBeInTheDocument()
+    const volver = screen.getByRole('link', { name: 'Volver a mi sección' })
+    expect(volver).toHaveAttribute('href', '/caja')
+  })
+
+  it('sesión de alumno en una ruta de caja: denegado con vuelta a /menu (FR-005)', async () => {
+    mockSesion(() =>
+      json({
+        id: 9,
+        nombre: 'Alumno',
+        correo: 'alumno@itsh.mx',
+        rol: 'usuario',
+      }),
+    )
+    renderRuta('/caja')
+
+    expect(await screen.findByText('Acceso denegado')).toBeInTheDocument()
+    expect(screen.queryByText('Módulo de caja')).not.toBeInTheDocument()
+    const volver = screen.getByRole('link', { name: 'Volver a mi sección' })
+    expect(volver).toHaveAttribute('href', '/menu')
   })
 })

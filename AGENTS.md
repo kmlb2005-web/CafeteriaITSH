@@ -35,8 +35,8 @@ App única con rutas por rol (`/admin`, `/caja`, `/cocina`, `/menu`, `/mis-pedid
   el runner self-hosted local `cafeteria-itsh-win`
   (`C:\Users\tsssb\cafeteria-runner`, arrancarlo con `iniciar-runner.ps1`;
   usa MySQL de la máquina y las variables de `runner/.env`, nunca del repo).
-- Conteo a 2026-11-02: **29 archivos de prueba / 178 pruebas** (backend 9/89,
-  frontend 20/89). Prueba aislada: `npx vitest run tests/integration/auth.test.ts`
+- Conteo a 2026-11-03: **31 archivos de prueba / 191 pruebas** (backend 11/99,
+  frontend 20/92). Prueba aislada: `npx vitest run tests/integration/auth.test.ts`
   (backend) o `npx vitest run src/routes/ProtectedRoute.test.tsx` (frontend).
 - Estado de requisitos y defectos: `docs/Matriz_de_calidad.md`; roadmap de
   calidad por rol en `docs/sprints.md` (sprints 6–11).

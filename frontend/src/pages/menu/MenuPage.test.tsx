@@ -155,6 +155,33 @@ describe('MenuPage (cliente)', () => {
     expect(JSON.parse(localStorage.getItem('carrito_v1') ?? '[]')).toHaveLength(0)
   })
 
+  it('el total del carrito es la suma de partidas al agregar y al quitar (FR-006)', async () => {
+    mockMenu(() =>
+      json({ fecha: '2026-10-27', items: [ITEM_OK, ITEM_BEBIDA] }),
+    )
+    renderMenu()
+    await screen.findByText('Gordita de chicharrón')
+
+    // Agregar dos platillos distintos: 35 + 25 = 60
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Agregar uno de Gordita de chicharrón' }),
+    )
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Agregar uno de Agua de horchata' }),
+    )
+    expect(await screen.findByText('2 platillos')).toBeInTheDocument()
+    expect(screen.getAllByText('$60.00').length).toBeGreaterThan(0)
+    expect(JSON.parse(localStorage.getItem('carrito_v1') ?? '[]')).toHaveLength(2)
+
+    // Quitar uno: el total vuelve a la suma restante (35)
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Quitar uno de Agua de horchata' }),
+    )
+    expect(await screen.findByText('1 platillo')).toBeInTheDocument()
+    expect(screen.getAllByText('$35.00').length).toBeGreaterThan(0)
+    expect(JSON.parse(localStorage.getItem('carrito_v1') ?? '[]')).toHaveLength(1)
+  })
+
   it('la búsqueda y los chips filtran el catálogo (FR-013)', async () => {
     mockMenu(() =>
       json({ fecha: '2026-10-27', items: [ITEM_OK, ITEM_BEBIDA] }),
