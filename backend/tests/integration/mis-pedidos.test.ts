@@ -159,7 +159,12 @@ afterAll(async () => {
   await execute('DELETE FROM pago WHERE pedido_id = ?', [idMostrador]);
   await execute('DELETE FROM pedido WHERE id = ?', [idMostrador]);
   await execute('DELETE FROM usuario WHERE correo LIKE ?', ['test-%@example.com']);
-  await execute('DELETE FROM menu_dia WHERE fecha = ?', [FECHA]);
+  await execute(
+    `DELETE FROM menu_dia
+     WHERE fecha = ? AND platillo_id IN
+       (SELECT id FROM platillo WHERE nombre = ?)`,
+    [FECHA, NOMBRE],
+  );
   await execute('DELETE FROM platillo WHERE nombre = ?', [NOMBRE]);
   await closePool();
 });
