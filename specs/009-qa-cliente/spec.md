@@ -55,9 +55,10 @@ que el cuerpo es `{ error: { code, message } }` sin stack trace.
 ### User Story 2 - El cliente ve estados claros en sus pantallas (Priority: P2)
 
 Como alumno, quiero que el menú y mis pedidos muestren estados vacíos y de
-error claros (sin quedarse en blanco ni en carga infinita), que la aplicación
-me devuelva a la pantalla de mi rol si intento entrar con una sesión de otro
-rol, y que el total del carrito sea correcto, para poder pedir sin confusión.
+error claros (sin quedarse en blanco ni en carga infinita), que si intento
+entrar a una sección con un rol que no me corresponde se me indique con
+claridad y se me ofrezca volver a mi sección, y que el total del carrito sea
+correcto, para poder pedir sin confusión.
 
 **Why this priority**: son las pantallas que el alumno ve siempre; sin estados
 vacíos/errores, un fallo de red se ve como pantalla rota y la fila RF-02 de la
@@ -76,7 +77,8 @@ carrito y verificar el total calculado.
 2. **Given** un fallo de red al cargar, **When** responde el servicio,
    **Then** aparece un mensaje de error claro y una opción de reintentar.
 3. **Given** una sesión de caja/cocina, **When** se navega a una ruta de
-   cliente (o viceversa), **Then** la app redirige a la pantalla propia del rol.
+   cliente (o viceversa), **Then** aparece la pantalla de acceso denegado con
+   un enlace que conduce a la sección propia del rol.
 4. **Given** un carrito con varias partidas, **When** se agrega o quita una,
    **Then** el total mostrado corresponde a la suma de partidas.
 
@@ -118,8 +120,8 @@ registra las tres filas con resultado, fecha y evidencia.
 - ¿Qué pasa si el menú está vacío *y* además falla la red? (prevalece el
   mensaje de error con reintento; no se muestra vacío engañoso).
 - ¿Qué pasa si el cliente guarda un enlace directo a una ruta de otro rol?
-  (la protección de ruta redirige según el rol de la sesión; la API responde
-  403 aunque la llamada llegue).
+  (la protección de ruta muestra acceso denegado con enlace a su sección; la
+  API responde 403 aunque la llamada llegue).
 - ¿Qué pasa si el total del carrito incluye platillos no disponibles
   agregados previamente? (el total se calcula sólo con partidas válidas y la
   interfaz impide agregar las no disponibles).
@@ -142,9 +144,10 @@ registra las tres filas con resultado, fecha y evidencia.
   controlado.
 - **FR-004**: `MenuPage` y `MisPedidosPage` MUST tener pruebas de componente
   para estado vacío y para error de red con reintento.
-- **FR-005**: MUST existir prueba de redirección por rol: sesión de otro rol
-  intentando acceder a una ruta del cliente (y viceversa) redirige a la
-  pantalla propia.
+- **FR-005**: MUST existir prueba de protección por rol en la interfaz: con
+  sesión de otro rol en una ruta del cliente (y viceversa) se muestra la
+  pantalla de acceso denegado con el enlace "Volver a mi sección" que apunta a
+  la ruta propia del rol.
 - **FR-006**: MUST existir prueba del total del carrito (suma de partidas al
   agregar/quitar) en el flujo de compra del cliente.
 - **FR-007**: El checklist manual de usabilidad §19 (área táctil ≥ 44 px,
