@@ -195,6 +195,9 @@ commit de este documento.
 
 ## Sprint 6 — Base de calidad y CI (spec 008)
 
+**Estado**: ✅ COMPLETADO el 2026-11-03 — demo: gate `verify` en verde local
+(backend 89 + frontend 89 pruebas) y CI en verde (run 41771104295, 3/3 jobs).
+
 **Feature**: `specs/008-qa-foundation/`
 
 **Objetivo**: que la verificación sea automática y única; cerrar el trabajo de
@@ -208,9 +211,11 @@ calidad en curso.
 - Script `verify` en `backend/package.json` y `frontend/package.json` +
   `scripts/verify.mjs` raíz que corre ambos paquetes.
 - `.github/workflows/ci.yml`: job `frontend` (lint + typecheck + test) y job
-  `backend` con servicio `mysql:8` (esquema `docs/001`+`docs/002` →
-  `npm run migrate` → `npm test`); secretos sólo en el workflow.
-- Chequeo en CI de que `backend/.env` no esté trackeado (reglas §21).
+  `backend` (migrate + seed + verify); chequeo de secretos no trackeados
+  (reglas §21). Corre en el runner self-hosted local `cafeteria-itsh-win`
+  (Windows + MySQL de la máquina vía `runner/.env`) mientras la cuenta de
+  GitHub esté bloqueada por facturación; al desbloquearla volver a
+  `ubuntu-latest` con servicio `mysql:8` (comentario al inicio del workflow).
 - Actualizar `AGENTS.md`: secuencia `verify` y conteo real de pruebas.
 
 **No entra**: pruebas nuevas por rol, cobertura de código.

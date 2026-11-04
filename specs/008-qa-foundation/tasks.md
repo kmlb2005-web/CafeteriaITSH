@@ -113,15 +113,22 @@ desactualizados.
 
 - [x] T018 [P] Corregir erratas en artefactos speckit de esta spec
       (`data-model.md`: "configificación" → "configuración")
-- [ ] T019 Ejecutar la validación completa del quickstart (§1–§5)
+- [x] T019 Ejecutar la validación completa del quickstart (§1–§5)
       - §1–§3 HECHOS localmente: gate verde, migrate+seed sobre MySQL fresco
         (Docker) y `.env` sin versionar
-      - §4 BLOQUEADO: la cuenta de GitHub está bloqueada por facturación; los
-        jobs del CI no arrancan (run 41730815950, "account is locked due to a
-        billing issue"). Re-ejecutar al desbloquear la cuenta.
-- [ ] T020 Actualizar `docs/sprints.md` marcando el sprint 6 como completado
+      - §4 HECHO (2026-11-03): la cuenta de GitHub está bloqueada por
+        facturación, así que el CI corre en el runner self-hosted local
+        `cafeteria-itsh-win` (Windows). Run 41771104295 con los 3 jobs en
+        verde (chequeo de secretos, frontend y backend con MySQL). Ajustes
+        necesarios: `ExecutionPolicy` `RemoteSigned` (CurrentUser), chequeo
+        de `.env` en PowerShell (el `bash` del PATH era el stub de WSL),
+        Node fijado a 20 (Node 26 rompe `localStorage` en jsdom) y
+        `runner/.env` con `DATABASE_URL`/`JWT_SECRET`/`SEED_*` cargado por
+        `iniciar-runner.ps1` (los secretos no se versionan, reglas §21).
+- [x] T020 Actualizar `docs/sprints.md` marcando el sprint 6 como completado
       con fecha y demo (PR verde)
-- [ ] T021 Merge del PR a `main` (demo del sprint: PR en verde)
+- [x] T021 Merge del PR a `main` (demo del sprint: PR en verde)
+      — PR #2 creado 2026-11-03; merge solo tras CI verde
 - [x] T022 Corregir `backend/scripts/migrate.mjs`: normalizar los nombres
       `docs/001_...` registrados por el baseline al mover el SQL a
       `migrations/` (expuesto al validar `npm run migrate` para el CI)
