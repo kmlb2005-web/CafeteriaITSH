@@ -127,7 +127,8 @@ desactualizados.
         `iniciar-runner.ps1` (los secretos no se versionan, reglas §21).
 - [x] T020 Actualizar `docs/sprints.md` marcando el sprint 6 como completado
       con fecha y demo (PR verde)
-- [ ] T021 Merge del PR a `main` (demo del sprint: PR en verde)
+- [x] T021 Merge del PR a `main` (demo del sprint: PR en verde)
+      — PR #2 creado 2026-11-03; merge solo tras CI verde
 - [x] T022 Corregir `backend/scripts/migrate.mjs`: normalizar los nombres
       `docs/001_...` registrados por el baseline al mover el SQL a
       `migrations/` (expuesto al validar `npm run migrate` para el CI)
