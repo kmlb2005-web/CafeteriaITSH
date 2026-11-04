@@ -29,8 +29,12 @@ App única con rutas por rol (`/admin`, `/caja`, `/cocina`, `/menu`, `/mis-pedid
   (lint → typecheck → pruebas) en `backend/` y `frontend/` y falla si alguno falla.
 - Por paquete: `cd <paquete> && npm run verify`.
 - **CI**: `.github/workflows/ci.yml` corre en cada PR y en cada push a `main`
-  (frontend; backend con MySQL efímera + `npm run migrate`; chequeo de `.env`
-  versionado). Un PR no debe integrarse con el CI en rojo.
+  y a `spec/**` (3 jobs: chequeo de `.env` versionado, frontend, backend con
+  migrate + seed). Un PR no debe integrarse con el CI en rojo.
+  Mientras la cuenta de GitHub esté bloqueada por facturación, el CI corre en
+  el runner self-hosted local `cafeteria-itsh-win`
+  (`C:\Users\tsssb\cafeteria-runner`, arrancarlo con `iniciar-runner.ps1`;
+  usa MySQL de la máquina y las variables de `runner/.env`, nunca del repo).
 - Conteo a 2026-11-02: **29 archivos de prueba / 178 pruebas** (backend 9/89,
   frontend 20/89). Prueba aislada: `npx vitest run tests/integration/auth.test.ts`
   (backend) o `npx vitest run src/routes/ProtectedRoute.test.tsx` (frontend).
