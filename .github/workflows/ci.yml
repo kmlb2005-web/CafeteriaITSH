@@ -25,13 +25,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Fallar si hay un archivo .env versionado
-        shell: bash
+        shell: powershell
         run: |
-          if git ls-files | grep -E '(^|/)\.env$'; then
-            echo "::error::Hay un archivo .env versionado en el repositorio. Los secretos viven solo en .env local (docs/reglas.md seccion 21)."
+          $versionados = git ls-files | Select-String -Pattern '(^|/)\.env$'
+          if ($versionados) {
+            Write-Error "Hay un archivo .env versionado en el repositorio. Los secretos viven solo en .env local (docs/reglas.md seccion 21)."
             exit 1
-          fi
-          echo "OK: ningun .env versionado (.env.example permitido)."
+          }
+          Write-Output "OK: ningun .env versionado (.env.example permitido)."
 
   frontend:
     name: Frontend (lint + typecheck + pruebas)
