@@ -159,7 +159,7 @@ respondido, matriz sin pÃ¡rrafos "pendiente" del rol cliente.
 
 - [x] T017 Ejecutar el gate completo `node scripts/verify.mjs` y confirmar
       verde en ambos paquetes
-- [ ] T018 Hacer push de la rama `spec/009-qa-cliente` y confirmar los 3
+- [x] T018 Hacer push de la rama `spec/009-qa-cliente` y confirmar los 3
       trabajos del CI en verde en GitHub (runner `cafeteria-itsh-win`,
       quickstart Â§4)
 - [ ] T019 Actualizar `docs/sprints.md` marcando el Sprint 7 como completado
