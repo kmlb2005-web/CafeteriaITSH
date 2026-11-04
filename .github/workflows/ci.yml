@@ -1,6 +1,15 @@
 # CI del aseguramiento de calidad (spec 008-qa-foundation).
-# Dos trabajos de verificación (frontend y backend) + chequeo de secretos.
-# Corre en cada pull request y en cada push a main.
+# Tres trabajos: chequeo de secretos, frontend y backend (con MySQL).
+#
+# NOTA (2026-11-03): la cuenta de GitHub está bloqueada por facturación y los
+# runners hospedados no arrancan ("account is locked due to a billing issue"),
+# así que corre en el runner self-hosted local `cafeteria-itsh-win`
+# (Windows, etiquetas: self-hosted, windows, X64).
+#   - El backend usa MySQL de la máquina y `backend/.env` (dotenv), por eso no
+#     hay servicio de contenedor ni variables en este archivo (reglas §21).
+#   - Al desbloquear la cuenta: cambiar `runs-on` a `ubuntu-latest`, restaurar
+#     el servicio `mysql:8` y las variables `DATABASE_URL`/`JWT_SECRET`/`NODE_ENV`
+#     (versión hospedada en el historial de este archivo / research.md R3).
 
 name: CI
 
@@ -12,21 +21,21 @@ on:
 jobs:
   chequeo-secretos:
     name: Chequeo de secretos (reglas §21)
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, windows]
     steps:
       - uses: actions/checkout@v4
       - name: Fallar si hay un archivo .env versionado
         shell: bash
         run: |
           if git ls-files | grep -E '(^|/)\.env$'; then
-            echo "::error::Hay un archivo .env versionado en el repositorio. Los secretos viven solo en .env local y en la configuracion del workflow (docs/reglas.md seccion 21)."
+            echo "::error::Hay un archivo .env versionado en el repositorio. Los secretos viven solo en .env local (docs/reglas.md seccion 21)."
             exit 1
           fi
           echo "OK: ningun .env versionado (.env.example permitido)."
 
   frontend:
     name: Frontend (lint + typecheck + pruebas)
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, windows]
     defaults:
       run:
         working-directory: frontend
@@ -44,33 +53,10 @@ jobs:
 
   backend:
     name: Backend (lint + typecheck + pruebas con MySQL)
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, windows]
     defaults:
       run:
         working-directory: backend
-    env:
-      # Solo para las pruebas del CI: base efímera y secreto de prueba.
-      # Nunca se versionan (chequeo en el trabajo "chequeo-secretos").
-      DATABASE_URL: mysql://root:cafe_ci@127.0.0.1:3306/cafe_itsh
-      JWT_SECRET: secreto-de-prueba-solo-ci-008
-      NODE_ENV: test
-      # Cuentas operativas de prueba (solo en el workflow; reglas §21)
-      SEED_ADMIN_PASSWORD: AdminCi!2026
-      SEED_CAJERO_PASSWORD: CajeroCi!2026
-      SEED_COCINERO_PASSWORD: CocineroCi!2026
-    services:
-      mysql:
-        image: mysql:8
-        env:
-          MYSQL_ROOT_PASSWORD: cafe_ci
-          MYSQL_DATABASE: cafe_itsh
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -pcafe_ci --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
