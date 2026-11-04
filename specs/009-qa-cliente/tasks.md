@@ -136,17 +136,17 @@ respondido, matriz sin pÃ¡rrafos "pendiente" del rol cliente.
       `04-confirmar-pedido.png`, `05-estado-anticipacion-10-min.png`,
       `06-mis-pedidos-listo.png` (sin `.env`, tokens ni datos reales a la
       vista) (FR-008, contracts Â§4)
-- [ ] T014 [US3] Crear `docs/checklist-usabilidad-cliente.md` con los Ã­tems de
+- [x] T014 [US3] Crear `docs/checklist-usabilidad-cliente.md` con los Ã­tems de
       `docs/reglas.md` Â§19 aplicados a la UI del cliente (Tailwind/shadcn,
       Ã¡rea tÃ¡ctil â‰¥44 px en steppers y CTA, responsiva, navegaciÃ³n sencilla,
       informaciÃ³n clara): casilla, nota y captura de respaldo (FR-007)
-- [ ] T015 [US3] Actualizar `docs/Matriz_de_calidad.md`: RF-01 y RF-02 en
+- [x] T015 [US3] Actualizar `docs/Matriz_de_calidad.md`: RF-01 y RF-02 en
       **Aprobado** con evidencia re-ejecutada 2026-11-03; RF-04 en
       **Aprobado** corrigiendo la cita `avisos.test.ts` â†’ `mis-pedidos.test.ts`
       (5 casos); cerrar **O-02** (prueba del fallo del aviso, T005) y registrar
       **D-04** cerrado (cita a archivo inexistente); eliminar el pÃ¡rrafo
       "Pendiente para el Sprint 7" (FR-009, research R2/R7)
-- [ ] T016 [US3] Actualizar `AGENTS.md` con el conteo final de archivos y
+- [x] T016 [US3] Actualizar `AGENTS.md` con el conteo final de archivos y
       pruebas si cambiÃ³ respecto de la lÃ­nea base de T001
 
 **Checkpoint**: US3 completa â€” evidencia y matriz listas para demo
@@ -157,7 +157,7 @@ respondido, matriz sin pÃ¡rrafos "pendiente" del rol cliente.
 
 **Purpose**: verificaciÃ³n global, CI y cierre del sprint
 
-- [ ] T017 Ejecutar el gate completo `node scripts/verify.mjs` y confirmar
+- [x] T017 Ejecutar el gate completo `node scripts/verify.mjs` y confirmar
       verde en ambos paquetes
 - [ ] T018 Hacer push de la rama `spec/009-qa-cliente` y confirmar los 3
       trabajos del CI en verde en GitHub (runner `cafeteria-itsh-win`,
