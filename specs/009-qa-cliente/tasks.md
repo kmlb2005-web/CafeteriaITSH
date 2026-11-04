@@ -163,10 +163,9 @@ respondido, matriz sin pÃ¡rrafos "pendiente" del rol cliente.
       trabajos del CI en verde en GitHub (runner `cafeteria-itsh-win`,
       quickstart Â§4)
 - [x] T019 Actualizar `docs/sprints.md` con el cierre técnico del Sprint 7,
-      fecha y demo (gate + CI verde + evidencia); queda pendiente el merge
-      del PR para cerrar la entrega
-- [ ] T020 Abrir el PR a `main`, verificarlo en verde y hacer merge (demo del
-      sprint)
+      fecha y demo (gate + CI verde + evidencia)
+- [x] T020 Abrir el PR a `main`, verificarlo en verde y hacer merge (demo del
+      sprint) — PR #3 integrado el 2026-11-04 (3/3 jobs en verde)
 
 ---
 
